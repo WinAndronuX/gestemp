@@ -8,6 +8,7 @@ typedef struct {
     float zoneVolume;
     float temperatureThreshold;
     float currentTemperature;
+    float internalHeat;
     FanStatus fanStatus;
     FanType fanType;
     int fanNum;
