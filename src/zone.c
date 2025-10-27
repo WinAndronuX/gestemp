@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "zone.h"
-#include "utils.h"
+#include <gestemp/zone.h>
+#include <gestemp/utils.h>
 
 void zoneRegistration() {
     FILE *pF = fopen("zones.bin", "ab");
