@@ -21,3 +21,4 @@ set(SOURCES
 
 # Creamos el ejecutable
 add_executable(gestemp ${SOURCES})
+configure_file(config.ini config.ini COPYONLY)
