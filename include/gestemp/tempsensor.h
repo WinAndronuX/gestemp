@@ -1,8 +1,9 @@
 #ifndef TEMPSENSOR_H
 #define TEMPSENSOR_H
 
-// #include <gestemp/zone.h> // Esperemos al santi
+#include <gestemp/zone.h>
 
-float tempsensorRead(/*Zone *z*/);
+void tempsensorInit();
+float tempsensorRead(Zone *z);
 
 #endif
