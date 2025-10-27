@@ -6,6 +6,7 @@ typedef struct {
     int zoneId;
     char zoneName[50];
     float temperatureThreshold;
+    float currentTemperature;
     FanStatus fanStatus;
     FanType fanType;
     int fanNum;
