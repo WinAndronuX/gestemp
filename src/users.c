@@ -223,6 +223,8 @@ int usersLogin() {
     if (user == NULL || strcmp(user->password, passwd) != 0)
         return false;
 
+    actualUser = *user;
+
     return true;
 }
 
