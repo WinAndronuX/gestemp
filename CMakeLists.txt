@@ -17,6 +17,7 @@ set(SOURCES
         src/tempsensor.c
         src/utils.c
         src/zone.c
+        src/users.c
 )
 
 # Creamos el ejecutable

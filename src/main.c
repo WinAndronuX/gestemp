@@ -1,14 +1,17 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <pthread.h>
 #include <gestemp/utils.h>
 #include <gestemp/tempsensor.h>
+#include <gestemp/users.h>
 
+bool programFinished = false;
 
 void *executeEverySecond() {
 
-    while (1) {
+    while (!programFinished) {
 
-        printf("Ejecutando..\n");
+//        printf("Ejecutando..\n");
 
         sleepSec(1);
     }
@@ -17,6 +20,7 @@ void *executeEverySecond() {
 int main() {
 
     tempsensorInit();
+    usersInit();
 
     clearConsole();
     pthread_t thread;
@@ -25,6 +29,16 @@ int main() {
         printf("Error al crear el hilo de ejecucion.\nSaliendo...\n");
         return 1;
     }
+
+    if (!usersLogin()) {
+        printf("Credenciales incorrectas\n");
+        programFinished = true;
+
+        pthread_join(thread, NULL);
+        return 1;
+    }
+
+    clearConsole();
 
     pthread_join(thread, NULL);
 
