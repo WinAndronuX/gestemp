@@ -4,6 +4,7 @@
 #include <gestemp/utils.h>
 #include <gestemp/tempsensor.h>
 #include <gestemp/users.h>
+#include <gestemp/menu.h>
 
 bool programFinished = false;
 
@@ -15,6 +16,146 @@ void *executeEverySecond() {
 
         sleepSec(1);
     }
+
+    return NULL;
+}
+
+void menu() {
+
+    int opc = -1;
+
+START:
+    clearConsole();
+    printf("%s\n", menuHeadStart);
+    menuPrint(menuStart);
+    opc = menuInputOpt(0, 5);
+
+    switch (opc) {
+    case 0: {
+        programFinished = true;
+        printf("Saliendo...\n");
+        return;
+    }
+    case 1: goto ZONES;     break;
+    case 2: goto TEMP;      break;
+    case 3: goto CONSULT;   break;
+    case 4: goto USERS;     break;
+    case 5: goto CONFIG;    break;
+    }
+
+    goto START;
+
+ZONES:
+    clearConsole();
+    printf("%s\n", menuHeadZones);
+    menuPrint(menuZones);
+    opc = menuInputOpt(0, 1);
+
+    switch (opc) {
+    case 0:
+        goto START;
+        break;
+    case 1:
+
+        break;
+    }
+
+    goto ZONES;
+
+TEMP:
+    clearConsole();
+    printf("%s\n", menuHeadTempCtrl);
+    menuPrint(menuTempCtrl);
+    opc = menuInputOpt(0, 4);
+
+    switch (opc) {
+    case 0:
+        goto START;
+        break;
+    case 1:
+
+        break;
+    case 2:
+
+        break;
+    case 3:
+
+        break;
+    case 4:
+
+        break;
+    }
+
+    goto TEMP;
+
+CONSULT:
+    clearConsole();
+    printf("%s\n", menuHeadQueries);
+    menuPrint(menuQueries);
+    opc = menuInputOpt(0, 3);
+
+    switch (opc) {
+    case 0:
+        goto START;
+        break;
+    case 1:
+
+        break;
+    case 2:
+
+        break;
+    case 3:
+
+        break;
+    }
+
+    goto CONSULT;
+
+USERS:
+    clearConsole();
+    printf("%s\n", menuHeadUsers);
+    menuPrint(menuUsers);
+    opc = menuInputOpt(0, 4);
+
+    switch (opc) {
+    case 0:
+        goto START;
+        break;
+    case 1:
+
+        break;
+    case 2:
+
+        break;
+    case 3:
+
+        break;
+    case 4:
+
+        break;
+    }
+
+    goto USERS;
+
+CONFIG:
+    clearConsole();
+    printf("%s\n", menuHeadConfig);
+    menuPrint(menuConfig);
+    opc = menuInputOpt(0, 2);
+
+    switch (opc) {
+    case 0:
+        goto START;
+        break;
+    case 1:
+
+        break;
+    case 2:
+
+        break;
+    }
+
+    goto CONFIG;
 }
 
 int main() {
@@ -38,7 +179,7 @@ int main() {
         return 1;
     }
 
-    clearConsole();
+    menu();
 
     pthread_join(thread, NULL);
 

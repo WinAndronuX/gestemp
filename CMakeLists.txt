@@ -18,6 +18,7 @@ set(SOURCES
         src/utils.c
         src/zone.c
         src/users.c
+        src/menu.c
 )
 
 # Creamos el ejecutable
