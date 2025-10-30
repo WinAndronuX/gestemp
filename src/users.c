@@ -23,7 +23,7 @@ static int loadUsers() {
     int i = 0;
     while (fread(&i[temp], sizeof(User), 1, file)) {
 
-        temp = reallocarray(temp, i + 2, sizeof(User));
+        temp = realloc(temp, (i + 2) * sizeof(User));
 
         numUsers++;
     }
@@ -156,7 +156,7 @@ int usersRemove(unsigned int id) {
 
     User* temp = listUsers;
 
-    listUsers = (User*) reallocarray(temp, --numUsers, sizeof(User));
+    listUsers = (User*) realloc(temp, --numUsers * sizeof(User));
 
     int i, j = 0;
     for (i = 0; i < numUsers; i++) {
