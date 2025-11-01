@@ -8,7 +8,7 @@ ListView* listviewCreate(char* title, int nCols) {
 
     ListView* data = malloc(sizeof(ListView));
 
-    strcpy(data->title, title);
+    data->title = title;
     data->nCols = nCols;
     data->colsSizes = calloc(sizeof(int), nCols);
     data->heads = calloc(sizeof(char*), nCols);
@@ -34,24 +34,24 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
         if (i == 0) {
             printf("┌");
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         } else if (i == lv->nCols - 1) {
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
             printf("┐\n");
         } else {
             printf("┬");
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         }
     }
 
     for (i = 0; i < lv->nCols; i++) {
 
-        char ss[lv->colsSizes[i] + 1];
+        char ss[lv->colsSizes[i]];
 
         int s = lv->colsSizes[i];
-        if (strlen(text) > s) {
+        if (strlen(lv->heads[i]) > s) {
             strncpy(ss, lv->heads[i], lv->colsSizes[i]);
-            ss[lv->colsSizes[i]+1] = '\0';
+            ss[lv->colsSizes[i]] = '\0';
         } else
             strcpy(ss, lv->heads[i]);
 
@@ -64,13 +64,13 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
         if (i == 0) {
             printf("├");
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         } else if (i == lv->nCols - 1) {
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
             printf("┤\n");
         } else {
             printf("┼");
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         }
     }
 }
@@ -84,12 +84,12 @@ void listviewAdd(ListView* lv,char* text) {
     if (lv->iCols >= lv->nCols) lv->iCols = 0;
 
     int j;
-    char ss[lv->colsSizes[lv->iCols] + 1];
+    char ss[lv->colsSizes[lv->iCols]];
 
     int s = lv->colsSizes[lv->iCols];
     if (strlen(text) > s) {
         strncpy(ss, text, lv->colsSizes[lv->iCols]);
-        ss[lv->colsSizes[lv->iCols]+1] = '\0';
+        ss[lv->colsSizes[lv->iCols]] = '\0';
     } else
         strcpy(ss, text);
 
@@ -108,13 +108,13 @@ void listviewFootPrint(ListView* lv) {
 
         if (i == 0) {
             printf("└");
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         } else if (i == lv->nCols - 1) {
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
             printf("┘\n");
         } else {
             printf("┴");
-            for (j = 0; j < lv->colsSizes[i] + 2; i++) printf("─");
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         }
     }
 
