@@ -27,7 +27,7 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
     lv->iCols += 1;
 
-    if (lv->iCols <= lv->nCols) return;
+    if (lv->iCols < lv->nCols - 1) return;
 
     int i, j;
     for (i = 0; i < lv->nCols; i++) {
