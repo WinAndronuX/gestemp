@@ -27,7 +27,7 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
     lv->iCols += 1;
 
-    if (lv->iCols < lv->nCols) return;
+    if (lv->iCols <= lv->nCols) return;
 
     int i, j;
     for (i = 0; i < lv->nCols; i++) {
@@ -81,23 +81,23 @@ void listviewHeadAddAuto(ListView* lv,char* text) {
 
 void listviewAdd(ListView* lv,char* text) {
 
-    int i, j;
-    for (i = 0; i < lv->nCols; i++) {
+    if (lv->iCols >= lv->nCols) lv->iCols = 0;
 
-        char ss[lv->colsSizes[i] + 1];
+    int j;
+    char ss[lv->colsSizes[lv->iCols] + 1];
 
-        int s = lv->colsSizes[i];
-        if (strlen(text) > s) {
-            strncpy(ss, text, lv->colsSizes[i]);
-            ss[lv->colsSizes[i]+1] = '\0';
-        } else
-            strcpy(ss, text);
+    int s = lv->colsSizes[lv->iCols];
+    if (strlen(text) > s) {
+        strncpy(ss, text, lv->colsSizes[lv->iCols]);
+        ss[lv->colsSizes[lv->iCols]+1] = '\0';
+    } else
+        strcpy(ss, text);
 
-        printf("| %s ", ss);
+    printf("| %s ", ss);
 
-        if (i == lv->nCols - 1) printf("|\n");
-    }
+    if (lv->iCols == lv->nCols - 1) printf("|\n");
 
+    lv->iCols += 1;
 }
 
 void listviewFootPrint(ListView* lv) {
