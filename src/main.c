@@ -48,114 +48,119 @@ START:
 ZONES:
     clearConsole();
     printf("%s\n", menuHeadZones);
-    menuPrint(menuZones);
-    opc = menuInputOpt(0, 1);
 
-    switch (opc) {
-    case 0:
-        goto START;
-        break;
-    case 1:
+    while (1) {
+        menuPrint(menuZones);
+        opc = menuInputOpt(0, 1);
 
-        break;
+        switch (opc) {
+        case 0:
+            goto START;
+            break;
+        case 1:
+
+            break;
+        }
     }
-
-    goto ZONES;
 
 TEMP:
     clearConsole();
     printf("%s\n", menuHeadTempCtrl);
-    menuPrint(menuTempCtrl);
-    opc = menuInputOpt(0, 4);
 
-    switch (opc) {
-    case 0:
-        goto START;
-        break;
-    case 1:
+    while (1) {
+        menuPrint(menuTempCtrl);
+        opc = menuInputOpt(0, 4);
 
-        break;
-    case 2:
+        switch (opc) {
+        case 0:
+            goto START;
+            break;
+        case 1:
 
-        break;
-    case 3:
+            break;
+        case 2:
 
-        break;
-    case 4:
+            break;
+        case 3:
 
-        break;
+            break;
+        case 4:
+
+            break;
+        }
     }
-
-    goto TEMP;
 
 CONSULT:
     clearConsole();
     printf("%s\n", menuHeadQueries);
-    menuPrint(menuQueries);
-    opc = menuInputOpt(0, 3);
 
-    switch (opc) {
-    case 0:
-        goto START;
-        break;
-    case 1:
+    while (1) {
+        menuPrint(menuQueries);
+        opc = menuInputOpt(0, 3);
 
-        break;
-    case 2:
+        switch (opc) {
+        case 0:
+            goto START;
+            break;
+        case 1:
 
-        break;
-    case 3:
+            break;
+        case 2:
 
-        break;
+            break;
+        case 3:
+
+            break;
+        }
     }
-
-    goto CONSULT;
 
 USERS:
     clearConsole();
     printf("%s\n", menuHeadUsers);
-    menuPrint(menuUsers);
-    opc = menuInputOpt(0, 4);
 
-    switch (opc) {
-    case 0:
-        goto START;
-        break;
-    case 1:
+    while (1) {
+        menuPrint(menuUsers);
+        opc = menuInputOpt(0, 4);
 
-        break;
-    case 2:
+        switch (opc) {
+        case 0:
+            goto START;
+            break;
+        case 1:
 
-        break;
-    case 3:
+            break;
+        case 2:
 
-        break;
-    case 4:
+            break;
+        case 3:
 
-        break;
+            break;
+        case 4:
+
+            break;
+        }
     }
-
-    goto USERS;
 
 CONFIG:
     clearConsole();
     printf("%s\n", menuHeadConfig);
-    menuPrint(menuConfig);
-    opc = menuInputOpt(0, 2);
 
-    switch (opc) {
-    case 0:
-        goto START;
-        break;
-    case 1:
+    while (1) {
+        menuPrint(menuConfig);
+        opc = menuInputOpt(0, 2);
 
-        break;
-    case 2:
+        switch (opc) {
+        case 0:
+            goto START;
+            break;
+        case 1:
 
-        break;
+            break;
+        case 2:
+
+            break;
+        }
     }
-
-    goto CONFIG;
 }
 
 int main() {
