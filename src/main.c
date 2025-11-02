@@ -26,7 +26,7 @@ void menu() {
 
 START:
     clearConsole();
-    printf("%s\n", menuHeadStart);
+    printf("%s", menuHeadStart);
     menuPrint(menuStart);
     opc = menuInputOpt(0, 5);
 
@@ -47,7 +47,7 @@ START:
 
 ZONES:
     clearConsole();
-    printf("%s\n", menuHeadZones);
+    printf("%s", menuHeadZones);
 
     while (1) {
         menuPrint(menuZones);
@@ -65,7 +65,7 @@ ZONES:
 
 TEMP:
     clearConsole();
-    printf("%s\n", menuHeadTempCtrl);
+    printf("%s", menuHeadTempCtrl);
 
     while (1) {
         menuPrint(menuTempCtrl);
@@ -92,7 +92,7 @@ TEMP:
 
 CONSULT:
     clearConsole();
-    printf("%s\n", menuHeadQueries);
+    printf("%s", menuHeadQueries);
 
     while (1) {
         menuPrint(menuQueries);
@@ -116,7 +116,7 @@ CONSULT:
 
 USERS:
     clearConsole();
-    printf("%s\n", menuHeadUsers);
+    printf("%s", menuHeadUsers);
 
     while (1) {
         menuPrint(menuUsers);
@@ -143,7 +143,7 @@ USERS:
 
 CONFIG:
     clearConsole();
-    printf("%s\n", menuHeadConfig);
+    printf("%s", menuHeadConfig);
 
     while (1) {
         menuPrint(menuConfig);
