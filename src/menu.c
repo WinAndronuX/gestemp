@@ -120,10 +120,11 @@ const char* menuConfig[] = {
 
 
 void menuPrint(const char* menu[]) {
+    printf("\nOpciones:\n");
 
     int i;
     for (i = 0; menu[i] != NULL; i++)
-        printf("%s\n", menu[i]);
+        printf("\t%s\n", menu[i]);
 }
 
 int menuInputOpt(int a, int b) {
