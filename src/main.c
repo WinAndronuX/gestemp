@@ -127,16 +127,16 @@ USERS:
             goto START;
             break;
         case 1:
-
+            usersPrint();
             break;
         case 2:
-
+            usersAdd();
             break;
         case 3:
-
+            usersRemove();
             break;
         case 4:
-
+            usersChangePasswd();
             break;
         }
     }

@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <gestemp/users.h>
+#include <gestemp/utils.h>
+#include <listview/listview.h>
 
 
 static User* listUsers = NULL;
@@ -14,21 +16,25 @@ static int loadUsers() {
     if (file == NULL)
         return false;
 
-    if(listUsers != NULL)
+    if (listUsers != NULL)
         free(listUsers);
 
-    User* temp = (User*) malloc(sizeof(User));
+    listUsers = NULL;
     numUsers = 0;
+    User tempUser;
 
-    int i = 0;
-    while (fread(&i[temp], sizeof(User), 1, file)) {
+    while (fread(&tempUser, sizeof(User), 1, file)) {
 
-        temp = realloc(temp, (i + 2) * sizeof(User));
+        User* temp = (User*) realloc(listUsers, (numUsers + 1) * sizeof(User));
+        if (temp == NULL) {
+            fclose(file);
+            return false;
+        }
+        listUsers = temp;
 
+        listUsers[numUsers] = tempUser;
         numUsers++;
     }
-
-    listUsers = temp;
 
     fclose(file);
 
@@ -53,6 +59,16 @@ static int existsUsername(char username[16]) {
     int i;
     for(i = 0; i < numUsers; i++)
         if (strcmp(i[listUsers].username, username) == 0)
+            return true;
+
+    return false;
+}
+
+static int existUserId(unsigned int id) {
+
+    int i;
+    for(i = 0; i < numUsers; i++)
+        if (i[listUsers].id == id)
             return true;
 
     return false;
@@ -89,7 +105,7 @@ int usersAdd() {
     User user;
 
     while (1) {
-        printf("Ingrese un nombre de usuario (max: 15 letras): ");
+        printf("Ingrese un nombre de usuario (max: 15 letras):\n%c ", PROMPT);
         scanf("%s", user.username);
 
         if (!existsUsername(user.username)) break;
@@ -97,13 +113,13 @@ int usersAdd() {
         printf("Error: Este nombre de usuario ya existe.\n");
     }
 
-    printf("Ingrese la contraseña (max: 15 letras): ");
+    printf("Ingrese la contraseña (max: 15 letras):\n%c ", PROMPT);
     scanf("%s", user.password);
 
     while (1) {
         int opc;
 
-        printf("Seleccione el rol del usuario:\n1 - Administrador\n 2 - Operador\n3 - Visitante\n\t> ");
+        printf("Seleccione el rol del usuario:\n\t1 - Administrador\n\t2 - Operador\n\t3 - Visitante\n> ");
         scanf("%d", &opc);
 
         switch (opc) {
@@ -126,26 +142,47 @@ int usersAdd() {
 
     user.id = getUserId();
 
-    FILE* file = fopen("users.dat", "ab");
-    if (file == NULL) {
-        printf("Error al guardar el usuario.\n");
-        return false;
-    }
+    User* temp = (User*) realloc(listUsers, (numUsers + 1) * sizeof(User));
+    temp[numUsers].id = user.id;
+    strcpy(temp[numUsers].username, user.username);
+    strcpy(temp[numUsers].password, user.password);
+    temp[numUsers].role = user.role;
+    listUsers = temp;
 
-    fwrite(&user, sizeof(User), 1, file);
-    fclose(file);
+    numUsers++;
+
+    writeUsers();
 
     return true;
 }
 
 
-int usersRemove(unsigned int id) {
+int usersRemove() {
+
+    if (actualUser.role != UserRoleAdmin) {
+        printf("Accion no permitida. Permisos insuficientes");
+        return false;
+    }
 
     loadUsers();
 
-    User* user = getUserById(id);
-    if (user == NULL) {
-        printf("Error. Usuario con id invalido\n");
+    unsigned int id;
+    printf("Ingrese el id del usuario a eliminar:\n%c ", PROMPT);
+    scanf("%ud", &id);
+
+    User* user;
+    int indexToRemove = -1;
+
+    for (int i = 0; i < numUsers; i++) {
+        if (i[listUsers].id == id) {
+            user = &listUsers[i];
+            indexToRemove = i;
+            break;
+        }
+    }
+
+    if (indexToRemove == -1) {
+        printf("Error. Id de usuario invalido\n");
         return false;
     }
 
@@ -154,25 +191,26 @@ int usersRemove(unsigned int id) {
         return false;
     }
 
-    User* temp = listUsers;
-
-    listUsers = (User*) realloc(temp, --numUsers * sizeof(User));
-
-    int i, j = 0;
-    for (i = 0; i < numUsers; i++) {
-
-        if (i[temp].id == id)
-            j = 1;
-
-        i[listUsers] = temp[i+j];
+    for (int i = indexToRemove; i < numUsers - 1; i++) {
+        listUsers[i] = listUsers[i+1];
     }
+
+    numUsers--;
+
+    listUsers = (User*) realloc(listUsers, numUsers * sizeof(User));
 
     writeUsers();
 
     return false;
 }
 
-int usersChangePasswd(unsigned int id) {
+int usersChangePasswd() {
+
+    unsigned int id = actualUser.id;
+    if (actualUser.role == UserRoleAdmin) {
+        printf("Ingrese el id del usuario al que quiere cambiar la contraseña:\n%c ", PROMPT);
+        scanf("%ud", &id);
+    }
 
     User* user = getUserById(id);
     if (user == NULL) {
@@ -185,10 +223,10 @@ int usersChangePasswd(unsigned int id) {
 
     while (1) {
 
-        printf("Ingrese una nueva contraseña (Max: 15): ");
+        printf("Ingrese una nueva contraseña (Max: 15):\n%c ", PROMPT);
         scanf("%15s", pass1);
 
-        printf("Vuelva a ingresar la contraseǹa: ");
+        printf("Vuelva a ingresar la contraseǹa:\n%c ", PROMPT);
         scanf("%15s", pass2);
 
         if (strcmp(pass1, pass2) == 0) break;
@@ -242,4 +280,41 @@ void usersInit() {
         writeUsers();
     }
 
+}
+
+void usersPrint() {
+
+    ListView* lv = listviewCreate("Usuarios", 3);
+
+    listviewHeadAdd(lv, "Id", 3);
+    listviewHeadAdd(lv, "Nombre", 20);
+    listviewHeadAdd(lv, "Rol", 9);
+
+    int i;
+    for (i = 0; i < numUsers; i++) {
+
+        char sId[5];
+        sprintf(sId, "%d", listUsers[i].id);
+
+        listviewAdd(lv, sId);
+
+        listviewAdd(lv, listUsers[i].username);
+
+        char role[10];
+        switch (listUsers[i].role) {
+            case UserRoleAdmin:
+                strcpy(role, "Admin");
+                break;
+            case UserRoleOperator:
+                strcpy(role, "Operador");
+                break;
+            case UserRoleViewer:
+                strcpy(role, "Visitante");
+                break;
+        }
+
+        listviewAdd(lv, role);
+    }
+
+    listviewFootPrint(lv);
 }
