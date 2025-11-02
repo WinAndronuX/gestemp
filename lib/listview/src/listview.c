@@ -29,6 +29,8 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
     if (lv->iCols < lv->nCols) return;
 
+    printf("\t** %s **\n\n", lv->title);
+
     int i, j;
     for (i = 0; i < lv->nCols; i++) {
 
@@ -56,7 +58,10 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
         } else
             strcpy(ss, lv->heads[i]);
 
-        printf("| %s ", ss);
+        char frmt[11];
+        sprintf(frmt, "| %c-%ds ", '%', lv->colsSizes[i]);
+
+        printf(frmt, ss);
 
         if (i == lv->nCols - 1) printf("|\n");
     }
@@ -95,14 +100,15 @@ void listviewAdd(ListView* lv,char* text) {
     } else
         strcpy(ss, text);
 
-    char frmt[10];
-    sprintf(frmt, "| %c%ds ", '%', lv->colsSizes[lv->iCols]);
+    char frmt[11];
+    sprintf(frmt, "| %c-%ds ", '%', lv->colsSizes[lv->iCols]);
 
     printf(frmt, ss);
 
     if (lv->iCols == lv->nCols - 1) printf("|\n");
 
     lv->iCols += 1;
+    lv->counter += 1;
 }
 
 void listviewFootPrint(ListView* lv) {
@@ -123,6 +129,7 @@ void listviewFootPrint(ListView* lv) {
             for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
         }
     }
+    printf("Total: %d registros\n", lv->counter);
 
     free(lv->colsSizes);
     free(lv->heads);
