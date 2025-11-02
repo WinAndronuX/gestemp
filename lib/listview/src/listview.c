@@ -29,9 +29,17 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
     if (lv->iCols < lv->nCols) return;
 
-    printf("\t** %s **\n\n", lv->title);
-
     int i, j;
+
+    int tableWidth = 0;
+
+    for (i = 0; i < lv->nCols; i++) tableWidth += lv->colsSizes[i];
+    tableWidth++;
+
+    int center = (tableWidth / 2) - (strlen(lv->title) / 2);
+
+    printf("%*c** %s **\n\n", center + 2 , ' ', lv->title);
+
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
@@ -49,19 +57,7 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
 
     for (i = 0; i < lv->nCols; i++) {
 
-        char ss[lv->colsSizes[i] + 1];
-
-        int s = lv->colsSizes[i];
-        if (strlen(lv->heads[i]) > s) {
-            strncpy(ss, lv->heads[i], lv->colsSizes[i]);
-            ss[lv->colsSizes[i] + 1] = '\0';
-        } else
-            strcpy(ss, lv->heads[i]);
-
-        char frmt[11];
-        sprintf(frmt, "| %c-%ds ", '%', lv->colsSizes[i]);
-
-        printf(frmt, ss);
+        printf("| %-*.*s ", lv->colsSizes[i], lv->colsSizes[i], lv->heads[i]);
 
         if (i == lv->nCols - 1) printf("|\n");
     }
@@ -90,20 +86,7 @@ void listviewAdd(ListView* lv,char* text) {
 
     if (lv->iCols >= lv->nCols) lv->iCols = 0;
 
-    int j;
-    char ss[lv->colsSizes[lv->iCols] + 1];
-
-    int s = lv->colsSizes[lv->iCols];
-    if (strlen(text) > s) {
-        strncpy(ss, text, lv->colsSizes[lv->iCols]);
-        ss[lv->colsSizes[lv->iCols + 1]] = '\0';
-    } else
-        strcpy(ss, text);
-
-    char frmt[11];
-    sprintf(frmt, "| %c-%ds ", '%', lv->colsSizes[lv->iCols]);
-
-    printf(frmt, ss);
+    printf("| %-*.*s ", lv->colsSizes[lv->iCols], lv->colsSizes[lv->iCols], text);
 
     if (lv->iCols == lv->nCols - 1) printf("|\n");
 
