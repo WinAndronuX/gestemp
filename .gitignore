@@ -58,6 +58,7 @@ dkms.conf
 .fleet/
 .cache/
 build/
+CMakeFiles/
 
 # Data files
 users.dat
