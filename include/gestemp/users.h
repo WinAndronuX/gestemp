@@ -18,8 +18,9 @@ extern User actualUser;
 
 void usersInit();
 int usersAdd();
-int usersRemove(unsigned int id);
-int usersChangePasswd(unsigned int id);
+int usersRemove();
+int usersChangePasswd();
 int usersLogin();
+void usersPrint();
 
 #endif
