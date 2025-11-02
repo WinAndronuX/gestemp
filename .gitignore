@@ -55,5 +55,9 @@ dkms.conf
 *.dwo
 
 .idea/
+.fleet/
 .cache/
 build/
+
+# Data files
+users.dat
