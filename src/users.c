@@ -113,7 +113,7 @@ int usersAdd() {
         printf("Error: Este nombre de usuario ya existe.\n");
     }
 
-    printf("Ingrese la contraseña (max: 15 letras):\n%c ", PROMPT);
+    printf("Ingrese la contrase%ca (max: 15 letras):\n%c ", 164, PROMPT);
     scanf("%s", user.password);
 
     while (1) {
@@ -208,7 +208,7 @@ int usersChangePasswd() {
 
     unsigned int id = actualUser.id;
     if (actualUser.role == UserRoleAdmin) {
-        printf("Ingrese el id del usuario al que quiere cambiar la contraseña:\n%c ", PROMPT);
+        printf("Ingrese el id del usuario al que quiere cambiar la contrase%ca:\n%c ", 164, PROMPT);
         scanf("%ud", &id);
     }
 
@@ -223,15 +223,15 @@ int usersChangePasswd() {
 
     while (1) {
 
-        printf("Ingrese una nueva contraseña (Max: 15):\n%c ", PROMPT);
+        printf("Ingrese una nueva contrase%ca (Max: 15):\n%c ", 164, PROMPT);
         scanf("%15s", pass1);
 
-        printf("Vuelva a ingresar la contraseǹa:\n%c ", PROMPT);
+        printf("Vuelva a ingresar la contrase%ca:\n%c ", 164, PROMPT);
         scanf("%15s", pass2);
 
         if (strcmp(pass1, pass2) == 0) break;
 
-        printf("Error. Las contraseñas no coinciden\n");
+        printf("Error. Las contrase%cas no coinciden\n", 164);
     }
 
     strcpy(user->password, pass1);
@@ -248,7 +248,7 @@ int usersLogin() {
     printf("Usuario: ");
     scanf("%15s", username);
 
-    printf("Contraseña: ");
+    printf("Contrase%ca: ", 164);
     scanf("%15s", passwd);
 
     User* user = NULL;

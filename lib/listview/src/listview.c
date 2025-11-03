@@ -43,15 +43,15 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
-            printf("┌");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
+            printf("%c", 218 );
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
         } else if (i == lv->nCols - 1) {
-            printf("┬");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
-            printf("┐\n");
+            printf("%c", 194);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printf("%c\n", 191);
         } else {
-            printf("┬");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
+            printf("%c", 194);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
         }
     }
 
@@ -65,15 +65,15 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
-            printf("├");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
+            printf("%c", 195);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
         } else if (i == lv->nCols - 1) {
-            printf("┼");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
-            printf("┤\n");
+            printf("%c", 197);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printf("%c\n", 180);
         } else {
-            printf("┼");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
+            printf("%c", 197);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
         }
     }
 }
@@ -101,15 +101,15 @@ void listviewFootPrint(ListView* lv) {
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
-            printf("└");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
+            printf("%c", 192);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
         } else if (i == lv->nCols - 1) {
-            printf("┴");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
-            printf("┘\n");
+            printf("%c", 193);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printf("%c\n", 217);
         } else {
-            printf("┴");
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("─");
+            printf("%c", 193);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
         }
     }
     printf("Total: %d registros\n", lv->counter);
