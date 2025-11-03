@@ -43,37 +43,43 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
-            printf("%c", 218 );
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printSymbol("┌", 218);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
         } else if (i == lv->nCols - 1) {
-            printf("%c", 194);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
-            printf("%c\n", 191);
+            printSymbol("┬", 194);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
+            printSymbol("┐", 191);
+            printf("\n");
         } else {
-            printf("%c", 194);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printSymbol("┬", 194);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
         }
     }
 
     for (i = 0; i < lv->nCols; i++) {
 
-        printf("| %-*.*s ", lv->colsSizes[i], lv->colsSizes[i], lv->heads[i]);
+        printSymbol("│", 179);
+        printf(" %-*.*s ", lv->colsSizes[i], lv->colsSizes[i], lv->heads[i]);
 
-        if (i == lv->nCols - 1) printf("|\n");
+        if (i == lv->nCols - 1) {
+            printSymbol("│", 179);
+            printf("\n");
+        }
     }
 
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
-            printf("%c", 195);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printSymbol("├", 195);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
         } else if (i == lv->nCols - 1) {
-            printf("%c", 197);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
-            printf("%c\n", 180);
+            printSymbol("┼", 197);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
+            printSymbol("┤", 180);
+            printf("\n");
         } else {
-            printf("%c", 197);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printSymbol("┼", 197);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
         }
     }
 }
@@ -86,9 +92,13 @@ void listviewAdd(ListView* lv,char* text) {
 
     if (lv->iCols >= lv->nCols) lv->iCols = 0;
 
-    printf("| %-*.*s ", lv->colsSizes[lv->iCols], lv->colsSizes[lv->iCols], text);
+    printSymbol("│", 179);
+    printf(" %-*.*s ", lv->colsSizes[lv->iCols], lv->colsSizes[lv->iCols], text);
 
-    if (lv->iCols == lv->nCols - 1) printf("|\n");
+    if (lv->iCols == lv->nCols - 1) {
+        printSymbol("│", 179);
+        printf("\n");
+    }
 
     lv->iCols += 1;
     lv->counter += 1;
@@ -101,15 +111,16 @@ void listviewFootPrint(ListView* lv) {
     for (i = 0; i < lv->nCols; i++) {
 
         if (i == 0) {
-            printf("%c", 192);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printSymbol("└", 192);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
         } else if (i == lv->nCols - 1) {
-            printf("%c", 193);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
-            printf("%c\n", 217);
+            printSymbol("┴", 193);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
+            printSymbol("┘", 217);
+            printf("\n");
         } else {
-            printf("%c", 193);
-            for (j = 0; j < lv->colsSizes[i] + 2; j++) printf("%c", 196);
+            printSymbol("┴", 193);
+            for (j = 0; j < lv->colsSizes[i] + 2; j++) printSymbol("─", 196);
         }
     }
     printf("Total: %d registros\n", lv->counter);

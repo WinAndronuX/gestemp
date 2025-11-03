@@ -1,6 +1,12 @@
 #ifndef LISTVIEW_H
 #define LISTVIEW_H
 
+#ifdef _WIN32
+#define printSymbol(u, w) printf("%c", w)
+#else
+#define printSymbol(u, w) printf(u)
+#endif
+
 typedef struct {
     char* title;
     int* colsSizes;
