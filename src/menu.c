@@ -35,7 +35,10 @@ const char* menuHeadZones = {
 };
 
 const char* menuZones[] = {
-    "1 ) Registro de Zona",
+    "1 ) Ver zonas",
+    "2 ) Agregar zona",
+    "3 ) Borrar zona",
+    "4 ) Modificar zona",
     "",
     "0 ) Regresar",
     NULL
