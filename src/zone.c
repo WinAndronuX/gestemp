@@ -378,5 +378,4 @@ void zoneTempCheck() {
             listZones[i].fanStatus = FanOff;
         }
     }
-    printf("\n");
 }
