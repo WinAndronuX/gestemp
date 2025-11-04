@@ -35,6 +35,8 @@ add_executable(gestemp
     src/zone.c
     src/users.c
     src/menu.c
+        src/tempctrl.cpp
+        include/gestemp/tempctrl.h
 )
 
 # Le decimos a 'gestemp' dónde están SUS cabeceras
