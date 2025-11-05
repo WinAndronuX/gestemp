@@ -17,6 +17,10 @@ typedef struct {
 
 extern bool zonesLoaded;
 
+static int zoneModValidation(char* string);
+
+static int zoneSearchId(char* string);
+
 static int loadZones();
 
 static int writeZones();
@@ -34,6 +38,8 @@ void zoneAdd();
 int zoneRemove();
 
 int zoneModification();
+
+int zoneThreshold();
 
 void zonePrint();
 
