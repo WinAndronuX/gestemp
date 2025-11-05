@@ -12,7 +12,7 @@ void *executeEverySecond() {
 
     while (!programFinished) {
 
-//        printf("Ejecutando..\n");
+        zoneTempCheck();
 
         sleepSec(1);
     }
@@ -51,14 +51,24 @@ ZONES:
 
     while (1) {
         menuPrint(menuZones);
-        opc = menuInputOpt(0, 1);
+        opc = menuInputOpt(0, 4);
 
         switch (opc) {
         case 0:
             goto START;
             break;
         case 1:
+            zonePrint();
+            break;
+        case 2:
+            zoneAdd();
+            break;
+        case 3:
+            zoneRemove();
 
+            break;
+        case 4:
+            zoneModification();
             break;
         }
     }
@@ -167,6 +177,7 @@ int main() {
 
     tempsensorInit();
     usersInit();
+    zoneInit();
 
     clearConsole();
     pthread_t thread;
