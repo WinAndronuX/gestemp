@@ -6,7 +6,6 @@
 #include <gestemp/users.h>
 #include <gestemp/menu.h>
 #include <gestemp/tempctrl.h>
-#include <gestemp/queries.h>
 
 bool programFinished = false, tempMonitor = false;
 
@@ -15,11 +14,10 @@ void *executeEverySecond() {
     while (!programFinished) {
 
         zoneTempCheck();
-        writeZones();
         if (tempMonitor) tempRealtimeMonitor();
         
 
-        sleepSec(5);
+        sleepSec(1);
     }
 
     writeZones();
@@ -72,6 +70,7 @@ ZONES:
             break;
         case 3:
             zoneRemove();
+
             break;
         case 4:
             zoneModification();
@@ -124,7 +123,7 @@ CONSULT:
             goto START;
             break;
         case 1:
-            //searchEventByRange(); todavia no subo el queries.c
+
             break;
         case 2:
 
