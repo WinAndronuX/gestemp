@@ -15,6 +15,38 @@ static float tempMax = 50, tempMin = -10;
 static Zone* listZones = NULL;
 static int numZones = 0;
 
+static int zoneModValidation(char* string, bool isAdding) {
+    if (actualUser.role != UserRoleOperator && actualUser.role != UserRoleAdmin) {
+        printf("Accion no permitida. Permisos insuficientes\n");
+        return false;
+    }
+
+    if (isAdding) return true;
+
+    loadZones();
+
+    if (numZones <= 0) {
+        printf("Error. No hay zonas por %s\n", string);
+        return false;
+    }
+
+    return true;
+}
+
+static int zoneSearchId(char* string) {
+    unsigned int id;
+    printf("Ingrese el id de la zona a %s:\n%c ", string, PROMPT);
+    scanf("%ud", &id);
+
+    for (int i = 0; i < numZones; i++) {
+        if (listZones[i].zoneId == id) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 static int loadZones() {
 
     FILE* file = fopen("zones.dat","rb");
@@ -192,6 +224,9 @@ Zone *zoneRegistration() {
 }
 
 void zoneAdd() {
+
+    if (!zoneModValidation("", true)) return;
+
     Zone *registeredZone = zoneRegistration();
     Zone* temp = (Zone*) realloc(listZones, (numZones + 1) *sizeof(Zone));
 
@@ -214,10 +249,7 @@ void zoneAdd() {
 
 int zoneRemove() {
 
-    if (actualUser.role != UserRoleOperator && actualUser.role != UserRoleAdmin) {
-        printf("Accion no permitida. Permisos insuficientes");
-        return false;
-    }
+    if (!zoneModValidation("eliminar", false)) return false;
 
     loadZones();
 
@@ -226,20 +258,7 @@ int zoneRemove() {
         return false;
     }
 
-    unsigned int id;
-    printf("Ingrese el id de la zona a eliminar:\n%c ", PROMPT);
-    scanf("%ud", &id);
-
-    Zone* zone;
-    int indexToRemove = -1;
-
-    for (int i = 0; i < numZones; i++) {
-        if (listZones[i].zoneId == id) {
-            zone = &listZones[i];
-            indexToRemove = i;
-            break;
-        }
-    }
+    const int indexToRemove = zoneSearchId("eliminar");
 
     if (indexToRemove == -1) {
         printf("Error. Id de zona invalido\n");
@@ -262,32 +281,11 @@ int zoneRemove() {
 
 int zoneModification() {
 
-    if (actualUser.role != UserRoleOperator && actualUser.role != UserRoleAdmin) {
-        printf("Accion no permitida. Permisos insuficientes\n");
-        return false;
-    }
+    if (!zoneModValidation("modificar", false)) return false;
 
     loadZones();
 
-    if (numZones <= 0) {
-        printf("Error. No hay zonas por modificar\n");
-        return false;
-    }
-
-    unsigned int id;
-    printf("Ingrese el id de la zona a modificar:\n%c ", PROMPT);
-    scanf("%ud", &id);
-
-    Zone* zone;
-    int indexToMod = -1;
-
-    for (int i = 0; i < numZones; i++) {
-        if (listZones[i].zoneId == id) {
-            zone = &listZones[i];
-            indexToMod = i;
-            break;
-        }
-    }
+    const int indexToMod = zoneSearchId("modificar");
 
     if (indexToMod == -1) {
         printf("Error. Id de zona invalido\n");
@@ -302,6 +300,29 @@ int zoneModification() {
 
     return true;
 
+}
+
+int zoneThreshold() {
+
+    if (!zoneModValidation("modificar", false)) return false;
+
+    loadZones();
+
+    const int indexToMod = zoneSearchId("cambiar el umbral");
+
+    if (indexToMod == -1) {
+        printf("Error. Id de zona invalido\n");
+        return false;
+    }
+
+    printf("\nCoincidencia encontrada:\n\tZona: %s\n\tId: %i\n\tUmbral actual: %f\n",
+        listZones[indexToMod].zoneName, listZones[indexToMod].zoneId, listZones[indexToMod].temperatureThreshold);
+    printf("Ingrese el nuevo umbral de la zona:\n%c", PROMPT);
+    scanf("%f", &listZones[indexToMod].temperatureThreshold);
+
+    writeZones();
+
+    return true;
 }
 
 void zonePrint() {

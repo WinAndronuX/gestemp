@@ -164,7 +164,7 @@ CONFIG:
             goto START;
             break;
         case 1:
-
+            zoneThreshold();
             break;
         case 2:
 
