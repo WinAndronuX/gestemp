@@ -17,7 +17,7 @@ typedef struct {
 
 extern bool zonesLoaded;
 
-static int zoneModValidation(char* string);
+static int zoneModValidation(char* string, bool isAdding);
 
 static int zoneSearchId(char* string);
 

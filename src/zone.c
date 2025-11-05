@@ -15,11 +15,13 @@ static float tempMax = 50, tempMin = -10;
 static Zone* listZones = NULL;
 static int numZones = 0;
 
-static int zoneModValidation(char* string) {
+static int zoneModValidation(char* string, bool isAdding) {
     if (actualUser.role != UserRoleOperator && actualUser.role != UserRoleAdmin) {
         printf("Accion no permitida. Permisos insuficientes\n");
         return false;
     }
+
+    if (isAdding) return true;
 
     loadZones();
 
@@ -222,6 +224,9 @@ Zone *zoneRegistration() {
 }
 
 void zoneAdd() {
+
+    if (!zoneModValidation("", true)) return;
+
     Zone *registeredZone = zoneRegistration();
     Zone* temp = (Zone*) realloc(listZones, (numZones + 1) *sizeof(Zone));
 
@@ -244,7 +249,7 @@ void zoneAdd() {
 
 int zoneRemove() {
 
-    if (!zoneModValidation("eliminar")) return false;
+    if (!zoneModValidation("eliminar", false)) return false;
 
     loadZones();
 
@@ -276,7 +281,7 @@ int zoneRemove() {
 
 int zoneModification() {
 
-    if (!zoneModValidation("modificar")) return false;
+    if (!zoneModValidation("modificar", false)) return false;
 
     loadZones();
 
@@ -299,7 +304,7 @@ int zoneModification() {
 
 int zoneThreshold() {
 
-    if (!zoneModValidation("modificar")) return false;
+    if (!zoneModValidation("modificar", false)) return false;
 
     loadZones();
 
