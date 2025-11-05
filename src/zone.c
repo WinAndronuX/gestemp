@@ -4,15 +4,15 @@
 #include <gestemp/zone.h>
 #include <gestemp/utils.h>
 #include <gestemp/tempsensor.h>
-#include <listview/listview.h>
-
 #include "gestemp/users.h"
+#include <listview/listview.h>
 
 bool zonesLoaded = false;
 
 static float tempMax = 50, tempMin = -10;
 
-static Zone* listZones = NULL;
+Zone* listZones = NULL;
+
 static int numZones = 0;
 
 static int zoneModValidation(char* string, bool isAdding) {
@@ -171,11 +171,13 @@ Zone *zoneRegistration() {
     }while (true);
 
     do{
-        printf("Ingrese el umbral de la zona: \n%c", PROMPT);
-        scanf("%f", &registeredZone->temperatureThreshold);
+        printf("Ingrese el umbral por defecto de la zona: \n%c", PROMPT);
+        scanf("%f", &registeredZone->defaultTemperatureThreshold);
 
-        if (!(registeredZone->temperatureThreshold > tempMax || registeredZone->temperatureThreshold < tempMin)) break;
-
+        if (!(registeredZone->defaultTemperatureThreshold > tempMax || registeredZone->defaultTemperatureThreshold < tempMin)) {
+            registeredZone->temperatureThreshold = registeredZone->defaultTemperatureThreshold;
+            break;
+        }
         printf("Error. Umbral fuera de rango.\n");
     }while (true);
 
@@ -307,7 +309,7 @@ int zoneModification() {
 
 }
 
-int zoneThreshold() {
+int zoneThresholdModification() {
 
     if (!zoneModValidation("modificar", false)) return false;
 
@@ -328,6 +330,30 @@ int zoneThreshold() {
         listZones[indexToMod].zoneName, listZones[indexToMod].zoneId, listZones[indexToMod].temperatureThreshold);
     printf("Ingrese el nuevo umbral de la zona:\n%c", PROMPT);
     scanf("%f", &listZones[indexToMod].temperatureThreshold);
+
+    writeZones();
+
+    return true;
+}
+
+int zoneDefaultThreshold() {
+    if (!zoneModValidation("modificar", false)) return false;
+
+    loadZones();
+
+    unsigned int id;
+    printf("Ingrese el id de la zona para regresar su umbral a por defecto:\n%c ", PROMPT);
+    scanf("%ud", &id);
+
+    const int indexToMod = zoneSearchId(id);
+
+    if (indexToMod == -1) {
+        printf("Error. Id de zona invalido\n");
+        return false;
+    }
+
+    printf("\nCoincidencia encontrada:\n\tZona: %s\n\tId: %i\n\tUmbral actual: %f\n\nCambiando al umbral por defecto: %f\n",
+        listZones[indexToMod].zoneName, listZones[indexToMod].zoneId, listZones[indexToMod].temperatureThreshold, listZones[indexToMod].defaultTemperatureThreshold);
 
     writeZones();
 
