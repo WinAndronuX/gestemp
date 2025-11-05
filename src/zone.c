@@ -76,21 +76,6 @@ static int loadZones() {
     return true;
 }
 
-static int writeZones() {
-
-    FILE* file = fopen("zones.dat","wb");
-
-    if (file == NULL) {
-        return false;
-    }
-
-    fwrite(listZones, sizeof(Zone), numZones, file);
-
-    fclose(file);
-
-    return true;
-}
-
 static unsigned int getZoneId() {
     bool inIn[numZones + 1];
     int i;
@@ -122,6 +107,21 @@ static unsigned int zoneNameVal(char zoneName[16]) {
         }
     }
     return false;
+}
+
+int writeZones() {
+
+    FILE* file = fopen("zones.dat","wb");
+
+    if (file == NULL) {
+        return false;
+    }
+
+    fwrite(listZones, sizeof(Zone), numZones, file);
+
+    fclose(file);
+
+    return true;
 }
 
 void zoneInit() {
@@ -329,8 +329,18 @@ int zoneThresholdModification() {
 
     printf("\nCoincidencia encontrada:\n\tZona: %s\n\tId: %i\n\tUmbral actual: %f\n",
         listZones[indexToMod].zoneName, listZones[indexToMod].zoneId, listZones[indexToMod].temperatureThreshold);
-    printf("Ingrese el nuevo umbral de la zona:\n%c", PROMPT);
-    scanf("%f", &listZones[indexToMod].temperatureThreshold);
+
+
+    do{
+        printf("Ingrese el nuevo umbral de la zona:\n%c", PROMPT);
+        scanf("%f", &listZones[indexToMod].temperatureThreshold);
+
+        if (!(listZones[indexToMod].temperatureThreshold > tempMax || listZones[indexToMod].temperatureThreshold < tempMin)) break;
+
+        printf("Error. Umbral fuera de rango.\n");
+    }while (true);
+
+
 
     writeZones();
 
