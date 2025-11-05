@@ -24,11 +24,11 @@ static int zoneSearchId(unsigned int id);
 
 static int loadZones();
 
-static int writeZones();
-
 static unsigned int getZoneId();
 
 static unsigned int zoneNameVal(char zoneName[16]);
+
+int writeZones();
 
 void zoneInit();
 
