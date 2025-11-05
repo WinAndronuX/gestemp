@@ -8,6 +8,7 @@ typedef struct {
     char zoneName[16];
     float zoneVolume;
     float temperatureThreshold;
+    float defaultTemperatureThreshold;
     float currentTemperature;
     float internalHeat;
     FanStatus fanStatus;
@@ -19,7 +20,7 @@ extern bool zonesLoaded;
 
 static int zoneModValidation(char* string, bool isAdding);
 
-static int zoneSearchId(char* string);
+static int zoneSearchId(unsigned int id);
 
 static int loadZones();
 
@@ -39,7 +40,9 @@ int zoneRemove();
 
 int zoneModification();
 
-int zoneThreshold();
+int zoneThresholdModification();
+
+int zoneDefaultThreshold();
 
 void zonePrint();
 
