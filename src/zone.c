@@ -233,6 +233,7 @@ void zoneAdd() {
     strcpy(temp[numZones].zoneName, registeredZone->zoneName);
     temp[numZones].zoneVolume = registeredZone->zoneVolume;
     temp[numZones].temperatureThreshold = registeredZone->temperatureThreshold;
+    temp[numZones].defaultTemperatureThreshold = registeredZone->defaultTemperatureThreshold;
     temp[numZones].currentTemperature = registeredZone->currentTemperature;
     temp[numZones].internalHeat = registeredZone->internalHeat;
     temp[numZones].fanStatus = registeredZone->fanStatus;
@@ -354,6 +355,8 @@ int zoneDefaultThreshold() {
 
     printf("\nCoincidencia encontrada:\n\tZona: %s\n\tId: %i\n\tUmbral actual: %f\n\nCambiando al umbral por defecto: %f\n",
         listZones[indexToMod].zoneName, listZones[indexToMod].zoneId, listZones[indexToMod].temperatureThreshold, listZones[indexToMod].defaultTemperatureThreshold);
+
+    listZones[indexToMod].temperatureThreshold = listZones[indexToMod].defaultTemperatureThreshold;
 
     writeZones();
 
