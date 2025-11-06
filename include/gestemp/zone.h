@@ -45,4 +45,10 @@ void zonePrint();
 
 void zoneTempCheck();
 
+void zoneFree(Zone* zones);
+
+void zoneSaveAll(Zone* listZones, int numZones);
+
+Zone* zoneLoadAll(int* numZones);
+
 #endif //GESTEMP_ZONE_H

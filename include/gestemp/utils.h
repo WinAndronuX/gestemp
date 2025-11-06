@@ -7,10 +7,12 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#define sleepMSec(s) Sleep(s)
 #define sleepSec(s) Sleep(s * 1000)
 #define clearConsole() system("cls")
 #else
 #include <unistd.h>
+#define sleepMSec(s) usleep(s * 0.001)
 #define sleepSec(s) sleep(s)
 #define clearConsole() system("clear")
 #endif

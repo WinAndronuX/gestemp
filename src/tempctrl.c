@@ -7,6 +7,7 @@
 #include <gestemp/fan.h>
 #include <gestemp/utils.h>
 #include <gestemp/menu.h>
+#include <Windows.h>
 #include <listview/listview.h> //Libreria
 #include "../include/gestemp/tempctrl.h"
 
@@ -101,93 +102,105 @@ void tempManualControl()
     clearConsole();
     int Id;
     printf("---  Activar Ventilador Manualmente ---\n");
-    scanf("%d", &Id);
-
-    Id = zoneSearchId(Id);
-
-    if (Id == NULL)
+    do
     {
-        printf("\nZona No encontrada \n");
-        sleepSec(3);
-        clearConsole();
-    }else
-    {
-        printf("\nZona: %s \n%i \n", listZones[Id].zoneName, listZones[Id].zoneId);
-        printf("Ventilador Estatus: %s\n", (listZones[Id].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
-        int op = menuInputOpt(0,2);
+        printf(" : ");
+        scanf("%i", &Id);
 
-        bool changed = false;
-        if (op == 1 && listZones[Id].fanStatus == FanOff) {
-            listZones[Id].fanStatus = FanOn;
-            changed = true;
-        } else if (op == 2 && listZones[Id].fanStatus == FanOn) {
-            listZones[Id].fanStatus = FanOff;
-            changed = true;
-        }
-        if (changed)
+        Id = zoneSearchId(Id);
+
+        if (Id == -1)
         {
-            printf("\nGuardando Cambios ...\n");
-            sleepSec(2);
+            printf("\nZona No encontrada \n");
+            sleepSec(3);
+            clearConsole();
         }else
         {
-            printf("\nSaliendo Sin Cambios ...\n");
-            sleepSec(2);
+            printf("\nZona: %s \n%i \n", listZones[Id].zoneName, listZones[Id].zoneId);
+            printf("Ventilador Estatus: %s\n", (listZones[Id].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
+            printf("\n1) Encender\n2) Apagar\n  0) Salir\n : ");
+            int op = menuInputOpt(0,2);
+
+            bool changed = false;
+            if (op == 1 && listZones[Id].fanStatus == FanOff) {
+                listZones[Id].fanStatus = FanOn;
+                changed = true;
+            } else if (op == 2 && listZones[Id].fanStatus == FanOn) {
+                listZones[Id].fanStatus = FanOff;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                printf("\nGuardando Cambios ...\n");
+                sleepSec(2);
+            }else
+            {
+                printf("\nSaliendo Sin Cambios ...\n");
+                sleepSec(2);
+            }
         }
-    }
-    return;
+    }while (Id == -1);
 
 }
 
-void tempRealTime()
-{
+void tempRealtimeMonitor() {
     clearConsole();
-    printf("--- Monitoreo en Tiempo Real ---\n");
+    printf("--- 4) Monitoreo en Tiempo Real ---\n");
+    printf("Presione 'q' para DETENER el monitoreo...\n\n");
+    sleepSec(2);
 
-    while (1)
-    {
-        int numZones= 0;
-        Zone *zonenum = NULL;
-        if (listZones == NULL || numZones == 0)
-        {
-            printf("No hay zonas registradas...\n");
+    while (1) {
+
+
+        int numZones = 0;
+        Zone* allZones = zoneLoadAll(&numZones);
+
+        if (allZones == NULL || numZones == 0) {
+            printf("No hay zonas registradas. Saliendo del monitoreo...\n");
             sleepSec(2);
             break;
         }
-        ListView* lv = listviewCreate("Estado de Zonas", 4);
 
+
+        clearConsole();
+        printf("--- Monitoreo en Tiempo Real (Presione 'q' para salir) ---\n\n");
+
+        ListView* lv = listviewCreate("Estado de Zonas", 4);
         listviewHeadAdd(lv, "ID", 5);
         listviewHeadAdd(lv, "Nombre", 20);
         listviewHeadAdd(lv, "Temp. Actual", 15);
         listviewHeadAdd(lv, "Ventilador", 10);
 
-        char temp[16];
+        char tempStr[16];
         for (int i = 0; i < numZones; i++) {
-
             sprintf(tempStr, "%d", allZones[i].zoneId);
             listviewAdd(lv, tempStr);
             listviewAdd(lv, allZones[i].zoneName);
             sprintf(tempStr, "%.2f C", allZones[i].currentTemperature);
             listviewAdd(lv, tempStr);
-
             listviewAdd(lv, (allZones[i].fanStatus == FanOn) ? "ON" : "OFF");
         }
 
         listviewFootPrint(lv);
+        zoneFree(allZones);
 
-        for (int i = 0; i < 10; i++)
-        {
+
+        for (int i = 0; i < 10; i++) {
             if (_kbhit()) {
-                goto end_monitor;
+                char key = _getch();
+                if (key == 'q' || key == 'Q') {
+                    goto end_monitor;
+                }
             }
+            sleepMSec(100);
+
         }
     }
 
-    end_monitor:
-
+end_monitor:
     clearBuffer();
-    printf("\n\nMonitoreo detenido ...\n");
+    printf("\n\nMonitoreo detenido.\n");
     sleepSec(1);
-
 }
 
-//  Falta zones, las funciones no estan probadas
