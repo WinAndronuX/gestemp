@@ -7,12 +7,12 @@
 #include <listview/listview.h>
 
 #include "gestemp/users.h"
-
+#import "utils.c"
 bool zonesLoaded = false;
 
 static float tempMax = 50, tempMin = -10;
 
-static Zone* listZones = NULL;
+Zone* listZones = NULL;
 static int numZones = 0;
 
 static int zoneModValidation(char* string, bool isAdding) {
@@ -33,7 +33,7 @@ static int zoneModValidation(char* string, bool isAdding) {
     return true;
 }
 
-static int zoneSearchId(const unsigned int id) {
+int zoneSearchId(const unsigned int id) {
 
     for (int i = 0; i < numZones; i++) {
         if (listZones[i].zoneId == id) {
@@ -400,12 +400,22 @@ void zonePrint() {
 
 void zoneTempCheck() {
     int i;
+    int currentTemp = -1;
     for (i = 0; i < numZones; i++) {
         listZones[i].currentTemperature = tempsensorRead(&listZones[i]);
+        currentTemp = listZones[i].currentTemperature;
+
         if (listZones[i].currentTemperature > listZones[i].temperatureThreshold) {
             listZones[i].fanStatus = FanOn;
         }else {
             listZones[i].fanStatus = FanOff;
         }
+
+        if (currentTemp != listZones[i].fanStatus && currentTemp != -1)
+        {
+            logEvent(listZones[i].zoneId,
+                listZones[i].fanStatus, 1);
+        }
+
     }
 }

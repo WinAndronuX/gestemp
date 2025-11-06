@@ -35,7 +35,7 @@ add_executable(gestemp
     src/zone.c
     src/users.c
     src/menu.c
-        src/tempctrl.cpp
+        src/tempctrl.c
         include/gestemp/tempctrl.h
 )
 

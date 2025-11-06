@@ -1,6 +1,3 @@
-//
-// Created by itane on 03/11/2025.
-//
 //Librerias Estandar
 #include <stdio.h>
 #include <conio.h>
@@ -13,49 +10,88 @@
 #include <listview/listview.h> //Libreria
 #include "../include/gestemp/tempctrl.h"
 
+#import "utils.c"
+#import "zone.c"
+
+
 void tempShowCurrent()
 {
     clearConsole();
-    printf("--- Ver Temperatura Actual ---\n\n");
-    int numZones = 0;
-    Zone* allZones = NULL; //Faltan las zonas
-
-    if (allZones == NULL || numZones == 0) {
-        printf("No hay zonas registradas. Registre una zona primero.\n");
-    } else {
-
-        ListView* lv = listviewCreate("Zonas", 4);
-
-        listviewHeadAdd(lv, "ID", 5);
-        listviewHeadAdd(lv, "Nombre", 20);
-        listviewHeadAdd(lv, "Temp. Actual", 15);
-        listviewHeadAdd(lv, "Ventilador", 10);
-
-        char tempStr[16];
-        for (int i = 0; i < numZones; i++) {
-            sprintf(tempStr, "%d", allZones[i].zoneId);
-            listviewAdd(lv, tempStr);
-            listviewAdd(lv, allZones[i].zoneName);
-            sprintf(tempStr, "%.2f C", allZones[i].currentTemperature);
-            listviewAdd(lv, tempStr);
-            listviewAdd(lv, (allZones[i].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
-        }
-
-        listviewFootPrint(lv);
-
+    printf("\n\n--- Ver Temperatura Actual ---\n\n");
+    int idSearch;
+    if (listZones == NULL)
+    {
+        puts("No hay zonas registradas. Registre una zona primero.\n");
+        return;
     }
+
+    do
+    {
+        puts("      0)Salir\n");
+        puts("Ingrese id: ");
+        scanf("%i",&idSearch);
+
+        if (idSearch == 0)
+            return;
+
+        idSearch = zoneSearchId(idSearch);
+    }while(idSearch != -1);
+
+    clearConsole();
+    printf("\n\n--- Ver Temperatura Actual ---\n\n");
+    ListView* lv = listviewCreate("Zonas", 4);
+
+    listviewHeadAdd(lv, "ID", 5);
+    listviewHeadAdd(lv, "Nombre", 20);
+    listviewHeadAdd(lv, "Temp. Actual", 15);
+    listviewHeadAdd(lv, "Ventilador", 10);
+
+    char tempStr[16];
+    sprintf(tempStr, "%d", listZones[idSearch].zoneId);
+    listviewAdd(lv, listZones[idSearch].zoneName);
+    sprintf(tempStr, "%.2f C", listZones[idSearch].currentTemperature);
+    listviewAdd(lv, (listZones[idSearch].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
+
+
+    listviewFootPrint(lv);
 
     printf("\nPresione Enter para continuar...");
     clearBuffer();
     getchar();
-    //falta el arreglo con las zonas por eso esta en gris
+
 
 }
 
 void tempShowHistory()
 {
     clearConsole();
-    printf("---  Historial de Eventos ---\n");
+    FILE *arch = fopen("historial.log", "r");
+    int lineCount = 0;
+
+    if (arch  == NULL)
+    {
+        printf("\n | Error al acceder al historial |\n");
+        return;
+    }else
+    {
+
+        printf("\n\n---  Historial de Eventos ---\n");
+
+        char lineBuffer[256];
+        while (fgets(lineBuffer, sizeof(lineBuffer), arch) != NULL) {
+            printf("%s", lineBuffer);
+            lineCount++;
+        }
+
+        if (lineCount == 0) {
+            printf("\n| El historial esta vacio |\n");
+        }
+
+        fclose(arch);
+    }
+    printf("\nPresione Enter para continuar...");
+    clearBuffer();
+    getchar();
 
 
 }
@@ -63,28 +99,29 @@ void tempShowHistory()
 void tempManualControl()
 {
     clearConsole();
-
+    int Id;
     printf("---  Activar Ventilador Manualmente ---\n");
-    scanf("%d", &zoneId);//revisar depsues
+    scanf("%d", &Id);
 
-    Zone* zone = NULL;
-    if (Zone == NULL)
+    Id = zoneSearchId(Id);
+
+    if (Id == NULL)
     {
         printf("\nZona No encontrada \n");
         sleepSec(3);
         clearConsole();
     }else
     {
-        printf("\nZona: %c \n%i \n" zone->zoneName, zone->zoneId);
-        printf("Ventilador Estatus: %c\n", (zone->fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
+        printf("\nZona: %s \n%i \n", listZones[Id].zoneName, listZones[Id].zoneId);
+        printf("Ventilador Estatus: %s\n", (listZones[Id].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
         int op = menuInputOpt(0,2);
 
         bool changed = false;
-        if (op == 1 && zone->fanStatus == FanOff) {
-            zone->fanStatus = FanOn;
+        if (op == 1 && listZones[Id].fanStatus == FanOff) {
+            listZones[Id].fanStatus = FanOn;
             changed = true;
-        } else if (op == 2 && zone->fanStatus == FanOn) {
-            zone->fanStatus = FanOff;
+        } else if (op == 2 && listZones[Id].fanStatus == FanOn) {
+            listZones[Id].fanStatus = FanOff;
             changed = true;
         }
         if (changed)
@@ -97,7 +134,7 @@ void tempManualControl()
             sleepSec(2);
         }
     }
-
+    return;
 
 }
 
@@ -110,7 +147,7 @@ void tempRealTime()
     {
         int numZones= 0;
         Zone *zonenum = NULL;
-        if (allZones == NULL || numZones == 0)
+        if (listZones == NULL || numZones == 0)
         {
             printf("No hay zonas registradas...\n");
             sleepSec(2);
