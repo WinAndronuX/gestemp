@@ -5,6 +5,7 @@
 #include <gestemp/tempsensor.h>
 #include <gestemp/users.h>
 #include <gestemp/menu.h>
+#include <gestemp/tempctrl.h>
 
 bool programFinished = false;
 
@@ -86,16 +87,16 @@ TEMP:
             goto START;
             break;
         case 1:
-
+            tempShowCurrent();
             break;
         case 2:
-
+            tempManualControlFan();
             break;
         case 3:
-
+            tempShowHistory();
             break;
         case 4:
-
+            tempRealTime();
             break;
         }
     }
