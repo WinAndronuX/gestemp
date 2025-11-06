@@ -8,9 +8,9 @@ void tempShowCurrent();
 
 void tempShowHistory();
 
-void tempManualControlFan();
+void tempManualControl();
 
-void tempRealTime();
+void tempRealtimeMonitor();
 
 
 #endif //GESTEMP_TEMPCTRL_H

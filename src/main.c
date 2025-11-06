@@ -90,13 +90,13 @@ TEMP:
             tempShowCurrent();
             break;
         case 2:
-            tempManualControlFan();
+            tempManualControl();
             break;
         case 3:
             tempShowHistory();
             break;
         case 4:
-            tempRealTime();
+            tempRealtimeMonitor();
             break;
         }
     }

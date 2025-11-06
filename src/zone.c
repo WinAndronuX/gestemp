@@ -7,7 +7,7 @@
 #include <listview/listview.h>
 
 #include "gestemp/users.h"
-#import "utils.c"
+
 bool zonesLoaded = false;
 
 static float tempMax = 50, tempMin = -10;
