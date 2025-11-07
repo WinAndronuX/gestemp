@@ -10,7 +10,6 @@
 
 #include <string.h>
 #include <listview/listview.h> //Libreria
-#include "../include/gestemp/tempctrl.h"
 
 #define MAX_LOG_LINES 10
 #define MAX_LINE_LENGTH 256
