@@ -428,14 +428,15 @@ void zoneSaveAll(Zone* allZones, int numZones)
     if (file == NULL) {
         printf("\nERROR :No se puede acceder a '%s' \n", ZONE_FILE);
         return;
-    }else if(numZones == 0){
-        return;
     }
-    fwrite(allZones, sizeof(Zone), numZones, file);
 
+    if (numZones > 0 && allZones != NULL)
+    {
+
+        fwrite(allZones, sizeof(Zone), numZones, file);
+    }
 
     fclose(file);
-
 }
 
 void zoneFree(Zone* zones) {

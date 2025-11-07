@@ -28,8 +28,12 @@ void logEvent(unsigned int id, int status, int mode)
         time_t t = time(NULL);
         struct tm *tm = localtime(&t);
 
-        fprintf(arch, "%02d:%02d %i %s %s\n", tm->tm_hour, tm->tm_min, id,
-            (status==0) ? "OFF" : "ON", (mode == 0) ? "MANUAL" : "AUTOMATICO");
+        fprintf(arch, "[%04d-%02d-%02d %02d:%02d:%02d] Zona %d: %s %s\n",
+        tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+        tm->tm_hour, tm->tm_min, tm->tm_sec,
+        id,
+        (status == 0) ? "APAGADO" : "ENCENDIDO",
+        (mode == 0) ? "MANUAL" : "AUTOMATICO");
     }
     fclose(arch);
 }

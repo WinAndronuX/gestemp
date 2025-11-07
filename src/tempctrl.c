@@ -7,12 +7,13 @@
 #include <gestemp/fan.h>
 #include <gestemp/utils.h>
 #include <gestemp/menu.h>
-#include <Windows.h>
+
+#include <string.h>
 #include <listview/listview.h> //Libreria
 #include "../include/gestemp/tempctrl.h"
 
-
-
+#define MAX_LOG_LINES 10
+#define MAX_LINE_LENGTH 256
 
 
 void tempShowCurrent()
@@ -71,38 +72,84 @@ void tempShowCurrent()
 
 }
 
-void tempShowHistory()
-{
+void tempShowHistory() {
+
     clearConsole();
-    FILE *arch = fopen("historial.log", "r");
-    int lineCount = 0;
+    printf("--- 3) Ver Historial de Eventos ---\n\n");
+    printf("Seleccione una opcion:\n");
+    printf(" 1) Ver el historial completo\n");
+    printf(" 2) Ver los ultimos 10 eventos\n");
+    printf(" 0) Regresar\n");
 
-    if (arch  == NULL)
-    {
-        printf("\n | Error al acceder al historial |\n");
+    int opc = menuInputOpt(0, 2);
+
+    if (opc == 0) {
         return;
-    }else
-    {
-
-        printf("\n\n---  Historial de Eventos ---\n");
-
-        char lineBuffer[256];
-        while (fgets(lineBuffer, sizeof(lineBuffer), arch) != NULL) {
-            printf("%s", lineBuffer);
-            lineCount++;
-        }
-
-        if (lineCount == 0) {
-            printf("\n| El historial esta vacio |\n");
-        }
-
-        fclose(arch);
     }
-    printf("\nPresione Enter para continuar...");
-    clearBuffer();
+
+    FILE* file = fopen("historial.log", "r");
+
+    if (file == NULL) {
+        printf("El historial esta vacio o no se pudo abrir.\n");
+    } else {
+
+        char lineBuffer[MAX_LINE_LENGTH];
+        int totalLines = 0;
+
+        if (opc == 1) {
+
+            printf("\n--- Historial Completo ---\n");
+
+
+            while (fgets(lineBuffer, sizeof(lineBuffer), file) != NULL) {
+                printf("%s", lineBuffer);
+                totalLines++;
+            }
+            if (totalLines == 0) {
+                printf("El historial esta vacio.\n");
+            }
+
+        } else if (opc == 2) {
+
+            printf("\n--- Ultimos 10 Eventos ---\n");
+
+
+            while (fgets(lineBuffer, sizeof(lineBuffer), file) != NULL) {
+                totalLines++;
+            }
+
+            if (totalLines == 0) {
+                 printf("El historial esta vacio.\n");
+            } else {
+
+                rewind(file);
+
+
+                int linesToSkip = totalLines - 10;
+                if (linesToSkip < 0) { // Por si hay menos de 10 líneas
+                    linesToSkip = 0;
+                }
+
+
+                for (int i = 0; i < linesToSkip; i++) {
+                    fgets(lineBuffer, sizeof(lineBuffer), file);
+                }
+
+
+                while (fgets(lineBuffer, sizeof(lineBuffer), file) != NULL) {
+                    printf("%s", lineBuffer);
+                }
+            }
+        }
+
+        fclose(file); // Cierra el archivo
+    }
+
+    printf("\n--- Fin del Historial ---\n");
+    printf("Presione Enter para continuar...");
+    clearBuffer(); //
     getchar();
-
-
+    clearConsole();
 }
 
 void tempManualControl()
@@ -114,6 +161,7 @@ void tempManualControl()
     printf("---  Activar Ventilador Manualmente ---\n");
     do
     {
+
         printf("Ingrese el ID de la zona\n > ");
         scanf("%i", &Id);
 
@@ -151,7 +199,7 @@ void tempManualControl()
             }
         }
     }while (Id == -1);
-
+    clearConsole();
 }
 
 void tempRealtimeMonitor() {
@@ -166,7 +214,7 @@ void tempRealtimeMonitor() {
         int numZones = 0;
         Zone* listZones = zoneLoadAll(&numZones);
 
-        ;
+        printf("%i", numZones);
 
 
         if (listZones == NULL || numZones == 0) {
@@ -177,7 +225,8 @@ void tempRealtimeMonitor() {
 
 
         clearConsole();
-        printf("--- Monitoreo en Tiempo Real (Presione 'q' para salir) ---\n\n");
+        printf("--- Monitoreo en Tiempo Real  ---\n\n");
+        printf("Presione 'q' para DETENER el monitoreo");
 
         ListView* lv = listviewCreate("Estado de Zonas", 4);
         listviewHeadAdd(lv, "ID", 5);
@@ -215,5 +264,6 @@ end_monitor:
     clearBuffer();
     printf("\n\nMonitoreo detenido.\n");
     sleepSec(1);
+    clearConsole();
 }
 

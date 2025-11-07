@@ -75,10 +75,11 @@ ZONES:
     }
 
 TEMP:
-    clearConsole();
-    printf("%s", menuHeadTempCtrl);
+
 
     while (1) {
+        clearConsole();
+        printf("%s", menuHeadTempCtrl);
         menuPrint(menuTempCtrl);
         opc = menuInputOpt(0, 4);
 
