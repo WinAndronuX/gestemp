@@ -6,6 +6,8 @@
 #include <gestemp/tempsensor.h>
 #include <gestemp/zone.h>
 
+#include "gestemp/utils.h"
+
 
 static float rho = 1.2;
 static float cp = 1005;
@@ -81,3 +83,4 @@ float tempsensorRead(Zone *z) {
 
     return newT;
 }
+

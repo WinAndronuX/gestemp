@@ -20,7 +20,7 @@ extern bool zonesLoaded;
 
 static int zoneModValidation(char* string, bool isAdding);
 
-static int zoneSearchId(unsigned int id);
+int zoneSearchId(unsigned int id);
 
 static int loadZones();
 
@@ -47,5 +47,11 @@ int zoneDefaultThreshold();
 void zonePrint();
 
 void zoneTempCheck();
+
+void zoneFree(Zone* zones);
+
+void zoneSaveAll(Zone* listZones, int numZones);
+
+Zone* zoneLoadAll(int* numZones);
 
 #endif //GESTEMP_ZONE_H

@@ -5,6 +5,7 @@
 #include <gestemp/tempsensor.h>
 #include <gestemp/users.h>
 #include <gestemp/menu.h>
+#include <gestemp/tempctrl.h>
 
 bool programFinished = false;
 
@@ -76,10 +77,11 @@ ZONES:
     }
 
 TEMP:
-    clearConsole();
-    printf("%s", menuHeadTempCtrl);
+
 
     while (1) {
+        clearConsole();
+        printf("%s", menuHeadTempCtrl);
         menuPrint(menuTempCtrl);
         opc = menuInputOpt(0, 4);
 
@@ -88,16 +90,16 @@ TEMP:
             goto START;
             break;
         case 1:
-
+            tempShowCurrent();
             break;
         case 2:
-
+            tempManualControl();
             break;
         case 3:
-
+            tempShowHistory();
             break;
         case 4:
-
+            tempRealtimeMonitor();
             break;
         }
     }

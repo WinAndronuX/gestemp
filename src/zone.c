@@ -10,6 +10,7 @@
 bool zonesLoaded = false;
 
 static float tempMax = 50, tempMin = -10;
+static const char* ZONE_FILE = "zones.dat";
 
 Zone* listZones = NULL;
 
@@ -33,7 +34,7 @@ static int zoneModValidation(char* string, bool isAdding) {
     return true;
 }
 
-static int zoneSearchId(const unsigned int id) {
+int zoneSearchId(const unsigned int id) {
 
     for (int i = 0; i < numZones; i++) {
         if (listZones[i].zoneId == id) {
@@ -46,7 +47,7 @@ static int zoneSearchId(const unsigned int id) {
 
 static int loadZones() {
 
-    FILE* file = fopen("zones.dat","rb");
+    FILE* file = fopen(ZONE_FILE ,"rb");
     if (file == NULL) {
         return false;
     }
@@ -130,6 +131,7 @@ void zoneInit() {
 
     if (!zonesLoaded) {
         printf("No se ha encontrado ninguna zona, antes de poder realizar algo, ingrese una zona\n");
+
     }
 
 }
@@ -439,12 +441,88 @@ void zonePrint() {
 
 void zoneTempCheck() {
     int i;
+    int currentTemp = -1;
     for (i = 0; i < numZones; i++) {
         listZones[i].currentTemperature = tempsensorRead(&listZones[i]);
+        currentTemp = listZones[i].currentTemperature;
+
         if (listZones[i].currentTemperature > listZones[i].temperatureThreshold) {
             listZones[i].fanStatus = FanOn;
         }else {
             listZones[i].fanStatus = FanOff;
         }
+
+        if (currentTemp != listZones[i].fanStatus && currentTemp != -1)
+        {
+            logEvent(listZones[i].zoneId,
+                listZones[i].fanStatus, 1);
+        }
+        zoneSaveAll(listZones, numZones);
     }
+}
+
+void zoneSaveAll(Zone* allZones, int numZones)
+{
+    FILE* file = fopen(ZONE_FILE, "wb");
+    if (file == NULL) {
+        printf("\nERROR :No se puede acceder a '%s' \n", ZONE_FILE);
+        return;
+    }
+
+    if (numZones > 0 && allZones != NULL)
+    {
+
+        fwrite(allZones, sizeof(Zone), numZones, file);
+    }
+
+    fclose(file);
+}
+
+void zoneFree(Zone* zones) {
+    if (zones != NULL) {
+        free(zones);
+    }
+}
+
+Zone* zoneLoadAll(int* numZones) {
+
+    FILE* file = fopen(ZONE_FILE, "rb");
+    if (file == NULL) {
+        *numZones = 0;
+        return NULL;
+    }
+
+
+    Zone* listZones = (Zone*) malloc(sizeof(Zone));
+    if (listZones == NULL) {
+        *numZones = 0;
+        fclose(file);
+        return NULL;
+    }
+
+    int i = 0;
+
+    while (fread(&listZones[i], sizeof(Zone), 1, file)) {
+        i++;
+
+        Zone* tempList = realloc(listZones, (i + 1) * sizeof(Zone));
+        if (tempList == NULL) {
+            fclose(file);
+            free(listZones);
+            *numZones = 0;
+            return NULL;
+        }
+        listZones = tempList;
+    }
+
+    *numZones = i;
+    fclose(file);
+
+    if (i == 0) {
+
+        free(listZones);
+        return NULL;
+    }
+
+    return listZones;
 }
