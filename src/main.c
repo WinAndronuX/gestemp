@@ -18,6 +18,8 @@ void *executeEverySecond() {
         sleepSec(1);
     }
 
+    writeZones();
+
     return NULL;
 }
 
@@ -166,10 +168,10 @@ CONFIG:
             goto START;
             break;
         case 1:
-            zoneThreshold();
+            zoneThresholdModification();
             break;
         case 2:
-
+            zoneDefaultThreshold();
             break;
         }
     }
