@@ -7,13 +7,15 @@
 #include <gestemp/menu.h>
 #include <gestemp/tempctrl.h>
 
-bool programFinished = false;
+bool programFinished = false, tempMonitor = false;
 
 void *executeEverySecond() {
 
     while (!programFinished) {
 
         zoneTempCheck();
+        if (tempMonitor) tempRealtimeMonitor();
+        
 
         sleepSec(1);
     }
@@ -99,7 +101,11 @@ TEMP:
             tempShowHistory();
             break;
         case 4:
+            tempMonitor = true;
             tempRealtimeMonitor();
+            clearBuffer();
+            getchar();
+            tempMonitor = false;
             break;
         }
     }

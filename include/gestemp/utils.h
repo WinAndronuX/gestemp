@@ -18,11 +18,11 @@
 #endif
 
 #define PROMPT '>'
-#define clearBuffer() int bfc; while ((bfc = getchar()) != '\n' && bfc != EOF)
 
 void fileValidation (FILE **pf);
 
 void logEvent(unsigned int id, int status, int mode);
 bool isInRange(int x, int a, int b);
+void clearBuffer();
 
 #endif //GESTEMP_UTILS_H

@@ -1,6 +1,5 @@
 //Librerias Estandar
 #include <stdio.h>
-#include <conio.h>
 
 #include <gestemp/tempctrl.h>
 #include <gestemp/zone.h>
@@ -203,66 +202,29 @@ void tempManualControl()
 
 void tempRealtimeMonitor() {
     int numZones = 0;
+    Zone* listZones = zoneLoadAll(&numZones);
 
     clearConsole();
-    printf("--- 4) Monitoreo en Tiempo Real ---\n");
-    printf("Presione 'q' para DETENER el monitoreo...\n\n");
-    sleepSec(2);
+    printf("--- Monitoreo en Tiempo Real  ---\n\n");
+    printf("Presione 'Enter' para DETENER el monitoreo");
 
-    while (1) {
-        int numZones = 0;
-        Zone* listZones = zoneLoadAll(&numZones);
+    ListView* lv = listviewCreate("Estado de Zonas", 4);
+    listviewHeadAdd(lv, "ID", 5);
+    listviewHeadAdd(lv, "Nombre", 20);
+    listviewHeadAdd(lv, "Temp. Actual", 15);
+    listviewHeadAdd(lv, "Ventilador", 10);
 
-        printf("%i", numZones);
-
-
-        if (listZones == NULL || numZones == 0) {
-            printf("No hay zonas registradas. Saliendo del monitoreo...\n");
-            sleepSec(2);
-            break;
-        }
-
-
-        clearConsole();
-        printf("--- Monitoreo en Tiempo Real  ---\n\n");
-        printf("Presione 'q' para DETENER el monitoreo");
-
-        ListView* lv = listviewCreate("Estado de Zonas", 4);
-        listviewHeadAdd(lv, "ID", 5);
-        listviewHeadAdd(lv, "Nombre", 20);
-        listviewHeadAdd(lv, "Temp. Actual", 15);
-        listviewHeadAdd(lv, "Ventilador", 10);
-
-        char tempStr[16];
-        for (int i = 0; i < numZones; i++) {
-            sprintf(tempStr, "%d", listZones[i].zoneId);
-            listviewAdd(lv, tempStr);
-            listviewAdd(lv, listZones[i].zoneName);
-            sprintf(tempStr, "%.2f C", listZones[i].currentTemperature);
-            listviewAdd(lv, tempStr);
-            listviewAdd(lv, (listZones[i].fanStatus == FanOn) ? "ON" : "OFF");
-        }
-
-        listviewFootPrint(lv);
-        zoneFree(listZones);
-
-
-        for (int i = 0; i < 10; i++) {
-            if (_kbhit()) {
-                char key = _getch();
-                if (key == 'q' || key == 'Q') {
-                    goto end_monitor;
-                }
-            }
-            sleepMSec(100);
-
-        }
+    char tempStr[16];
+    for (int i = 0; i < numZones; i++) {
+        sprintf(tempStr, "%d", listZones[i].zoneId);
+        listviewAdd(lv, tempStr);
+        listviewAdd(lv, listZones[i].zoneName);
+        sprintf(tempStr, "%.2f C", listZones[i].currentTemperature);
+        listviewAdd(lv, tempStr);
+        listviewAdd(lv, (listZones[i].fanStatus == FanOn) ? "ON" : "OFF");
     }
 
-end_monitor:
-    clearBuffer();
-    printf("\n\nMonitoreo detenido.\n");
-    sleepSec(1);
-    clearConsole();
+    listviewFootPrint(lv);
+    zoneFree(listZones);
 }
 

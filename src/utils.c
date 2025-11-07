@@ -39,3 +39,8 @@ void logEvent(unsigned int id, int status, int mode)
 }
 //status 0:OFF     1:ON
 //mode 0:manual    1:automatico
+
+void clearBuffer() {
+    int __bfc__var;
+    while ((__bfc__var = getchar()) != '\n' && __bfc__var != EOF);
+}
