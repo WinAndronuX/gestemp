@@ -20,7 +20,7 @@ extern bool zonesLoaded;
 
 static int zoneModValidation(char* string, bool isAdding);
 
-int zoneSearchId(unsigned int id);
+int zoneSearchName(char* name);
 
 static int loadZones();
 
