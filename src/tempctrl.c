@@ -20,6 +20,7 @@ void tempShowCurrent()
     Zone* listZones = zoneLoadAll(&numZones);
 
     unsigned int idSearch;
+    char zoneName[16];
     if (listZones == NULL)
     {
         puts("No hay zonas registradas. Registre una zona primero.\n");
@@ -30,14 +31,16 @@ void tempShowCurrent()
     {
         clearConsole();
         printf("\n\n--- Ver Temperatura Actual ---\n\n");
-        puts("      0)Salir\n");
-        puts("Ingrese id: ");
-        scanf("%i",&idSearch);
+        puts("      'exit' para salir del programa\n");
+        clearBuffer();
+        puts("Ingrese el nombre de la zona: ");
+        scanf("%[^\n]%*c", zoneName);
 
-        if (idSearch == 0)
+        if (strcmp(zoneName, "exit") == 0) {
             return;
+        }
 
-        idSearch = zoneSearchId(idSearch);
+        idSearch = zoneSearchName(zoneName);
     }while(idSearch == -1);
 
     clearConsole();
@@ -155,15 +158,17 @@ void tempManualControl()
     int numZones;
     Zone* listZones = zoneLoadAll(&numZones);
     clearConsole();
+    char zoneName[16];
     int Id;
     printf("---  Activar Ventilador Manualmente ---\n");
     do
     {
 
-        printf("Ingrese el ID de la zona\n > ");
-        scanf("%i", &Id);
+        puts("Ingrese el nombre de la zona: ");
+        clearBuffer();
+        scanf("%[^\n]%*c", zoneName);
 
-        Id = zoneSearchId(Id);
+        Id = zoneSearchName(zoneName);
 
         if (Id == -1)
         {

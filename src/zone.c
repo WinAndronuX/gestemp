@@ -34,10 +34,10 @@ static int zoneModValidation(char* string, bool isAdding) {
     return true;
 }
 
-int zoneSearchId(const unsigned int id) {
+int zoneSearchName(char* name) {
 
     for (int i = 0; i < numZones; i++) {
-        if (listZones[i].zoneId == id) {
+        if (strcmp(listZones[i].zoneName, name) == 0) {
             return i;
         }
     }
@@ -100,12 +100,18 @@ static unsigned int getZoneId() {
 static unsigned int zoneNameVal(char zoneName[16]) {
     int i;
     if (strlen(zoneName) > 15) {
+        printf("Error. Nombre de zona muy largo.\n");
         return true;
     }
     for (i = 0; i < numZones; i++) {
         if (strcmp(listZones[i].zoneName, zoneName) == 0) {
+            printf("Error. Nombre ya utilizado.\n");
             return true;
         }
+    }
+    if (strcmp(zoneName, "exit") == 0) {
+        printf("Error. La zona no puede llamarse la palabra reservada 'exit'.\n");
+        return true;
     }
     return false;
 }
@@ -141,14 +147,14 @@ Zone *zoneRegistration() {
 
     Zone* registeredZone = malloc(sizeof(Zone));
 
+    clearBuffer();
+
     do {
         printf("Ingrese el nombre de la zona: \n%c", PROMPT);
-        scanf("%s", registeredZone->zoneName);
-        clearBuffer();
+        scanf("%[^\n]%*c", registeredZone->zoneName);
 
         if (!zoneNameVal(registeredZone->zoneName)) break;
 
-        printf("Error con el nombre de zona.\n");
     }while (true);
 
     registeredZone->zoneId = getZoneId();
@@ -260,14 +266,15 @@ int zoneRemove() {
         return false;
     }
 
-    unsigned int id;
-    printf("Ingrese el id de la zona a eliminar:\n%c ", PROMPT);
-    scanf("%ud", &id);
+    char zoneName[16];
+    clearBuffer();
+    printf("Ingrese el nombre de la zona a eliminar:\n%c ", PROMPT);
+    scanf("%[^\n]%*c", zoneName);
 
-    const int indexToRemove = zoneSearchId(id);
+    const int indexToRemove = zoneSearchName(zoneName);
 
     if (indexToRemove == -1) {
-        printf("Error. Id de zona invalido\n");
+        printf("Error. No se encontro la zona\n");
         return false;
     }
 
@@ -291,14 +298,15 @@ int zoneModification() {
 
     loadZones();
 
-    unsigned int id;
-    printf("Ingrese el id de la zona a modificar:\n%c ", PROMPT);
-    scanf("%ud", &id);
+    char zoneName[16];
+    clearBuffer();
+    printf("Ingrese el nombre de la zona a modificar:\n%c ", PROMPT);
+    scanf("%[^\n]%*c", zoneName);
 
-    const int indexToMod = zoneSearchId(id);
+    const int indexToMod = zoneSearchName(zoneName);
 
     if (indexToMod == -1) {
-        printf("Error. Id de zona invalido\n");
+        printf("Error. No se encontro la zona\n");
         return false;
     }
 
@@ -318,14 +326,15 @@ int zoneThresholdModification() {
 
     loadZones();
 
-    unsigned int id;
-    printf("Ingrese el id de la zona a cambiar el umbral:\n%c ", PROMPT);
-    scanf("%ud", &id);
+    char zoneName[16];
+    clearBuffer();
+    printf("Ingrese el nombre de la zona a cambiar el umbral:\n%c ", PROMPT);
+    scanf("%[^\n]%*c", zoneName);
 
-    const int indexToMod = zoneSearchId(id);
+    const int indexToMod = zoneSearchName(zoneName);
 
     if (indexToMod == -1) {
-        printf("Error. Id de zona invalido\n");
+        printf("Error. No se encontro la zona\n");
         return false;
     }
 
@@ -354,14 +363,15 @@ int zoneDefaultThreshold() {
 
     loadZones();
 
-    unsigned int id;
-    printf("Ingrese el id de la zona para regresar su umbral a por defecto:\n%c ", PROMPT);
-    scanf("%ud", &id);
+    char zoneName[16];
+    clearBuffer();
+    printf("Ingrese el nombre de la zona a regresar a su configuracion por defecto:\n%c ", PROMPT);
+    scanf("%[^\n]%*c", zoneName);
 
-    const int indexToMod = zoneSearchId(id);
+    const int indexToMod = zoneSearchName(zoneName);
 
     if (indexToMod == -1) {
-        printf("Error. Id de zona invalido\n");
+        printf("Error. No se encontro la zona\n");
         return false;
     }
 
