@@ -22,7 +22,7 @@ static int zoneModValidation(char* string, bool isAdding);
 
 int zoneSearchName(char* name);
 
-static int loadZones();
+int loadZones();
 
 static unsigned int getZoneId();
 

@@ -14,7 +14,7 @@ static const char* ZONE_FILE = "zones.dat";
 
 Zone* listZones = NULL;
 
-static int numZones = 0;
+int numZones = 0;
 
 static int zoneModValidation(char* string, bool isAdding) {
     if (actualUser.role != UserRoleOperator && actualUser.role != UserRoleAdmin) {
@@ -45,7 +45,7 @@ int zoneSearchName(char* name) {
     return -1;
 }
 
-static int loadZones() {
+int loadZones() {
 
     FILE* file = fopen(ZONE_FILE ,"rb");
     if (file == NULL) {
@@ -111,6 +111,11 @@ static unsigned int zoneNameVal(char zoneName[16]) {
     }
     if (strcmp(zoneName, "exit") == 0) {
         printf("Error. La zona no puede llamarse la palabra reservada 'exit'.\n");
+        return true;
+    }
+
+    if (strcmp(zoneName, "all") == 0) {
+        printf("Error. La zona no puede llamarse la palabra reservada 'all'.\n");
         return true;
     }
     return false;
@@ -391,7 +396,7 @@ void zonePrint() {
 
     listviewHeadAdd(lv, "Id", 3);
     listviewHeadAdd(lv, "Nombre", 17);
-    listviewHeadAdd(lv, "Volumen (m³)", 13);
+    listviewHeadAdd(lv, "Volumen (m^3)", 14);
     listviewHeadAdd(lv, "Temperatura", 12);
     listviewHeadAdd(lv, "Umbral", 8);
     listviewHeadAdd(lv, "Calor (W)", 9);
@@ -450,24 +455,21 @@ void zonePrint() {
 }
 
 void zoneTempCheck() {
+    loadZones();
     int i;
-    int currentTemp = -1;
     for (i = 0; i < numZones; i++) {
+        FanStatus previousStatus = listZones[i].fanStatus;
         listZones[i].currentTemperature = tempsensorRead(&listZones[i]);
-        currentTemp = listZones[i].currentTemperature;
 
         if (listZones[i].currentTemperature > listZones[i].temperatureThreshold) {
             listZones[i].fanStatus = FanOn;
-        }else {
+        } else {
             listZones[i].fanStatus = FanOff;
         }
 
-        if (currentTemp != listZones[i].fanStatus && currentTemp != -1)
-        {
-            logEvent(listZones[i].zoneId,
-                listZones[i].fanStatus, 1);
+        if (previousStatus != listZones[i].fanStatus) {
+            logEvent(listZones[i].zoneId, listZones[i].fanStatus, 1);
         }
-        zoneSaveAll(listZones, numZones);
     }
 }
 
@@ -503,8 +505,8 @@ Zone* zoneLoadAll(int* numZones) {
     }
 
 
-    Zone* listZones = (Zone*) malloc(sizeof(Zone));
-    if (listZones == NULL) {
+    Zone* lZones = (Zone*) malloc(sizeof(Zone));
+    if (lZones == NULL) {
         *numZones = 0;
         fclose(file);
         return NULL;
@@ -512,17 +514,17 @@ Zone* zoneLoadAll(int* numZones) {
 
     int i = 0;
 
-    while (fread(&listZones[i], sizeof(Zone), 1, file)) {
+    while (fread(&lZones[i], sizeof(Zone), 1, file)) {
         i++;
 
-        Zone* tempList = realloc(listZones, (i + 1) * sizeof(Zone));
+        Zone* tempList = realloc(lZones, (i + 1) * sizeof(Zone));
         if (tempList == NULL) {
             fclose(file);
-            free(listZones);
+            free(lZones);
             *numZones = 0;
             return NULL;
         }
-        listZones = tempList;
+        lZones = tempList;
     }
 
     *numZones = i;
@@ -530,9 +532,9 @@ Zone* zoneLoadAll(int* numZones) {
 
     if (i == 0) {
 
-        free(listZones);
+        free(lZones);
         return NULL;
     }
 
-    return listZones;
+    return lZones;
 }
