@@ -124,7 +124,7 @@ CONSULT:
             goto START;
             break;
         case 1:
-            //searchEventByRange(); todavia no subo el queries.c
+            searchEventByRange();
             break;
         case 2:
 
