@@ -33,7 +33,7 @@ void tempShowCurrent()
         printf("\n\n--- Ver Temperatura Actual ---\n\n");
         puts("      'exit' para salir del programa\n");
         clearBuffer();
-        puts("Ingrese el nombre de la zona: ");
+        printf("Ingrese el nombre de la zona: \n%c ",PROMPT );
         scanf("%[^\n]%*c", zoneName);
 
         if (strcmp(zoneName, "exit") == 0) {
@@ -164,7 +164,7 @@ void tempManualControl()
     do
     {
 
-        puts("Ingrese el nombre de la zona: ");
+        printf("Ingrese el nombre de la zona: \n%c ",PROMPT );
         clearBuffer();
         scanf("%[^\n]%*c", zoneName);
 
@@ -179,7 +179,7 @@ void tempManualControl()
         {
             printf("\nZona: %s \n%i \n", listZones[Id].zoneName, listZones[Id].zoneId);
             printf("Ventilador Estatus: %s\n", (listZones[Id].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
-            printf("\n\n1) Encender\n2) Apagar\n0) Salir\n\n");
+            printf("\n\n1) Encender\n2) Apagar\n0) Salir\n\n" );
             int op = menuInputOpt(0,2);
 
             bool changed = false;
