@@ -130,7 +130,7 @@ CONSULT:
 
             break;
         case 3:
-
+            exportToCSV();
             break;
         }
     }

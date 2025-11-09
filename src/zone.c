@@ -184,7 +184,7 @@ Zone *zoneRegistration() {
     }while (true);
 
     do{
-        printf("Ingrese el umbral por defecto de la zona: \n%c", PROMPT);
+        printf("Ingrese el umbral por defecto de la zona: \n%c ", PROMPT);
         scanf("%f", &registeredZone->defaultTemperatureThreshold);
 
         if (!(registeredZone->defaultTemperatureThreshold > tempMax || registeredZone->defaultTemperatureThreshold < tempMin)) {
