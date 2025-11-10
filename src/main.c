@@ -27,6 +27,18 @@ void *executeEverySecond() {
     return NULL;
 }
 
+void *executeEvery5Minutes() {
+
+    while (!programFinished) {
+
+        // Aqui va la llamada al log de eventos
+
+        sleepSec(120);
+    }
+
+    return NULL;
+}
+
 void menu() {
 
     int opc = -1;
@@ -198,17 +210,26 @@ int main() {
         return 1;
     }
 
+    pthread_t thread2;
+    const int err2 = pthread_create(&thread2, NULL, executeEvery5Minutes, NULL);
+    if (err2) {
+        printf("Error al crear el hilo de ejecucion.\nSaliendo...\n");
+        return 1;
+    }
+
     if (!usersLogin()) {
         printf("Credenciales incorrectas\n");
         programFinished = true;
 
         pthread_join(thread, NULL);
+        pthread_join(thread2, NULL);
         return 1;
     }
 
     menu();
 
     pthread_join(thread, NULL);
+    pthread_join(thread2, NULL);
 
     return 0;
 }
