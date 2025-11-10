@@ -78,6 +78,6 @@ El ejecutable (`gestemp.exe` o `gestemp`) estará dentro de la carpeta `build/`.
 La simulación se controla mediante config.ini, que debe estar en la misma carpeta que el ejecutable.
 
   * **AIR_DENSITY:** Densidad del aire 
-  * ** AIR_HEAT_CAPACITY:** Capacidad calorífica del aire 
+  * **AIR_HEAT_CAPACITY:** Capacidad calorífica del aire 
   * **EXTERN_TEMP:** Temperatura exterior de referencia
   * **MAX_TEMP / MIN_TEMP:** Límites superior e inferior de la simulación
