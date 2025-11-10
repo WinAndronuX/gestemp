@@ -92,14 +92,14 @@ void exportToCSV() {
     char date[11], time[9], message[100];
     int zoneId, itemsRead;
     int linesExported = 0;
-
+    rewind(logFile);
 
     while (fgets(line, sizeof(line), logFile) != NULL) {
 
 
         itemsRead = sscanf(line, "[%10s %8s] Zona %d: %[^\n]", date, time, &zoneId, message);
 
-        if (itemsRead == 4) {
+        if (itemsRead > 1) {
 
 
             bool dateMatch = (strlen(filterDate) == 0) || (strcmp(date, filterDate) == 0);
@@ -108,7 +108,13 @@ void exportToCSV() {
 
             if (dateMatch && typeMatch) {
                 fprintf(csvFile, "%s,%s,%d,%s\n", date, time, zoneId, message);
+                fflush(csvFile);
                 linesExported++;
+            }else
+            {
+                puts("No hay suficiente historial...\n");
+                sleepSec(3);
+                return;
             }
         }
     }
