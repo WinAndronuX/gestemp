@@ -11,32 +11,23 @@
 bool programFinished = false, tempMonitor = false;
 
 void *executeEverySecond() {
+    int i;
 
-    while (!programFinished) {
+    for (i = 0; !programFinished; i++) {
 
         zoneTempCheck();
         writeZones();
         if (tempMonitor) tempRealtimeMonitor();
-        
+
+        if (i == 23) {
+            zoneLog();
+            i = 0;
+        }
 
         sleepSec(5);
     }
 
     writeZones();
-
-    return NULL;
-}
-
-void *executeEvery5Minutes() {
-
-    while (!programFinished) {
-
-        zoneLog();
-
-        writeZones();
-
-        sleepSec(120);
-    }
 
     return NULL;
 }
@@ -212,26 +203,17 @@ int main() {
         return 1;
     }
 
-    pthread_t thread2;
-    const int err2 = pthread_create(&thread2, NULL, executeEvery5Minutes, NULL);
-    if (err2) {
-        printf("Error al crear el hilo de ejecucion.\nSaliendo...\n");
-        return 1;
-    }
-
     if (!usersLogin()) {
         printf("Credenciales incorrectas\n");
         programFinished = true;
 
         pthread_join(thread, NULL);
-        pthread_join(thread2, NULL);
         return 1;
     }
 
     menu();
 
     pthread_join(thread, NULL);
-    pthread_join(thread2, NULL);
 
     return 0;
 }
