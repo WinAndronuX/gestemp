@@ -12,7 +12,7 @@ static Fan list[] = { {"Abanic", "IFan", 0.04},  {"Abanic", "IFan Plus", 0.12}, 
 
 
 void fanPrintInfo(FanType t) {
-    printf("%s %s | Airflow rate: %.2f m³/s", t[list].brand, t[list].model, t[list].airflow);
+    printf("%s %s | Airflow rate: %.2f m^3/s", t[list].brand, t[list].model, t[list].airflow);
 }
 
 float fanGetAirflowRate(FanType t) {

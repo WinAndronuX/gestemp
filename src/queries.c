@@ -281,7 +281,7 @@ void searchEventByRange() {
         char zoneNameSearch[16], statusStr[10], modeStr[11];
 
         int parsed = sscanf(line,
-            "[%d-%d-%d %d:%d:%d] Zona %d \"%*[^\"]\": %*s %*[^.]. Temperatura registrada: %f C",
+            "[%d-%d-%d %d:%d:%d] Zona %d \"%*[^\"]\": %*s %*[^-]-> Temperatura registrada: %f C",
             &tmDate.tm_year, &tmDate.tm_mon, &tmDate.tm_mday,
             &tmDate.tm_hour, &tmDate.tm_min, &tmDate.tm_sec,
             &zoneId, &zoneTemp);
