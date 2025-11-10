@@ -36,7 +36,7 @@ El sistema se organiza en un menú interactivo con las siguientes capacidades:
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone [https://github.com/WinAndronuX/gestemp.git](https://github.com/WinAndronuX/gestemp.git)
+    git clone https://github.com/WinAndronuX/gestemp.git
     cd gestemp
     ```
 
