@@ -9,6 +9,10 @@
 #include <gestemp/queries.h>
 #include <gestemp/theme.h>
 
+//Luis Daniel Salazar Sanchez - 2222332
+//José Santiago Castro Reyes - 2148314
+//Ethan Abdiel Espinoza Acosta - 2225447
+
 bool programFinished = false, tempMonitor = false;
 
 void *executeEverySecond() {
