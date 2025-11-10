@@ -158,6 +158,7 @@ static int isValidDate(struct tm* date) {
     }
 
     date->tm_year = date->tm_year - 1900;
+    date->tm_mon = date->tm_mon -1;
     return true;
 }
 
@@ -189,7 +190,7 @@ void searchEventByRange() {
     }
 
     if (searchId == -1) {
-        printf("Error. ID de zona invalido.\n");
+        printf("Error. Nombre de zona invalido.\n");
         zoneFree(listZones);
         fclose(file);
         return;
@@ -197,10 +198,11 @@ void searchEventByRange() {
 
     printf("\nSeleccione el tipo de filtro:\n");
     printf("\t1) Rango de fechas\n");
-    printf("\t2) Mostrar todos (solo filtrar por zona)\n\n");
+    printf("\t2) Rango de temperatura\n");
+    printf("\t3) Mostrar todos (solo filtrar por zona)\n\n");
     printf("\t0) Salir\n");
 
-    int filterType = menuInputOpt(0, 2);
+    int filterType = menuInputOpt(0, 3);
     clearBuffer();
 
     if (filterType == 0) {
@@ -208,9 +210,10 @@ void searchEventByRange() {
         fclose(file);
         return;
     }
-    struct tm minDate, maxDate;
     time_t startDate, endDate;
+    float minTemp, maxTemp;
     if (filterType == 1) {
+        struct tm minDate, maxDate;
         do {
             do {
                 printf("Ingrese fecha de inicio con el formato YYYY-MM-DD HH:MM:SS\n%c ", PROMPT);
@@ -236,6 +239,32 @@ void searchEventByRange() {
             if (!(startDate > endDate)) break;
             printf("Error. Rango de fechas invalidos, intente de nuevo por favor.\n");
         }while (true);
+    }else if (filterType == 2) {
+        do {
+            do {
+                printf("Ingrese la cota inferior de temperatura\n%c", PROMPT);
+                scanf("%f", &minTemp);
+                clearBuffer();
+
+                if (!(minTemp < -10 || minTemp > 50)) break;
+
+                printf("Error. Temperatura fuera de rango.\n");
+            }while (true);
+
+            do {
+                printf("Ingrese la cota superior de temperatura\n%c", PROMPT);
+                scanf("%f", &maxTemp);
+                clearBuffer();
+
+                if (!(maxTemp < -10 || maxTemp > 50)) break;
+
+                printf("Error. Temperatura fuera de rango.\n");
+            }while (true);
+
+            if (!(minTemp > maxTemp)) break;
+
+            printf("Error. Rango invalido, intente de nuevo por favor");
+        }while (true);
     }
 
     printf("\nEventos Filtrados\n\n");
@@ -243,28 +272,36 @@ void searchEventByRange() {
     char line[MAX_LINE_LENGTH];
     int eventsFound = 0;
 
+    bool zoneMatch = false, dateMatch = false, tempMatch = false;
+
     while (fgets(line, sizeof(line), file) != NULL) {
         struct tm tmDate;
         time_t ttDate;
-        int zoneId;
+        int zoneId; float zoneTemp;
+        char zoneNameSearch[16], statusStr[10], modeStr[11];
 
-        int parsed = sscanf(line, "[%d-%d-%d %d:%d:%d] Zona %d:", &tmDate.tm_year, &tmDate.tm_mon, &tmDate.tm_mday,
-                            &tmDate.tm_hour, &tmDate.tm_min, &tmDate.tm_sec, &zoneId);
+        int parsed = sscanf(line,
+            "[%d-%d-%d %d:%d:%d] Zona %d \"%*[^\"]\": %*s %*[^.]. Temperatura registrada: %f C",
+            &tmDate.tm_year, &tmDate.tm_mon, &tmDate.tm_mday,
+            &tmDate.tm_hour, &tmDate.tm_min, &tmDate.tm_sec,
+            &zoneId, &zoneTemp);
 
-        tmDate.tm_year -= 1900;
-        ttDate = mktime(&tmDate);
+        if (parsed < 7) continue;
 
-        if (parsed < 7) {
-            continue;
-        }
-        bool zoneMatch = (strcmp(zoneName, "all") == 0 || searchId == zoneId);
+        zoneMatch = (strcmp(zoneName, "all") == 0 || searchId == zoneId);
 
-        bool dateMatch = true;
         if (filterType == 1) {
+            tmDate.tm_year -= 1900;
+            tmDate.tm_mon -= 1;
+            ttDate = mktime(&tmDate);
             dateMatch = (ttDate >= startDate && ttDate <= endDate);
+        }else if (filterType == 2) {
+            tempMatch = (zoneTemp >= minTemp && zoneTemp <= maxTemp);
+        }else if (filterType == 3) {
+            dateMatch = true; zoneMatch = true;
         }
 
-        if (zoneMatch && dateMatch) {
+        if (zoneMatch && dateMatch || zoneMatch && tempMatch) {
             printf("%s", line);
             eventsFound++;
         }
