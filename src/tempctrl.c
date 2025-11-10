@@ -19,7 +19,6 @@ void tempShowCurrent()
     int numZones;
     Zone* listZones = zoneLoadAll(&numZones);
 
-    unsigned int idSearch;
     char zoneName[16];
     if (listZones == NULL)
     {
@@ -27,21 +26,19 @@ void tempShowCurrent()
         return;
     }
 
-    do
-    {
-        clearConsole();
-        printf("\n\n--- Ver Temperatura Actual ---\n\n");
-        puts("      'exit' para salir del programa\n");
-        clearBuffer();
-        printf("Ingrese el nombre de la zona: \n%c ",PROMPT );
-        scanf("%[^\n]%*c", zoneName);
 
-        if (strcmp(zoneName, "exit") == 0) {
-            return;
-        }
+    clearConsole();
+    printf("\n\n--- Ver Temperatura Actual ---\n\n");
+    clearBuffer();
+    printf("Ingrese el nombre de la zona: \n%c ",PROMPT);
+    scanf("%[^\n]%*c", zoneName);
 
-        idSearch = zoneSearchName(zoneName);
-    }while(idSearch == -1);
+    unsigned int idSearch = zoneSearchName(zoneName);
+    if (idSearch == -1) {
+        printf("Error. No se encontro la zona.\n");
+        return;
+    }
+
 
     clearConsole();
     printf("\n\n--- Ver Temperatura Actual ---\n\n");
@@ -179,21 +176,29 @@ void tempManualControl()
         {
             printf("\nZona: %s \n%i \n", listZones[Id].zoneName, listZones[Id].zoneId);
             printf("Ventilador Estatus: %s\n", (listZones[Id].fanStatus == FanOn) ? "ENCENDIDO" : "APAGADO");
-            printf("\n\n1) Encender\n2) Apagar\n0) Salir\n\n" );
-            int op = menuInputOpt(0,2);
+            printf("\n\n1) Encender\n2) Apagar\n3) Automatico\n0) Salir\n\n" );
+            int op = menuInputOpt(0,3);
 
             bool changed = false;
-            if (op == 1 && listZones[Id].fanStatus == FanOff) {
+            if (op == 1) {
                 listZones[Id].fanStatus = FanOn;
+                listZones[Id].forced = true;
                 changed = true;
-            } else if (op == 2 && listZones[Id].fanStatus == FanOn) {
+                logEvent(listZones[Id].zoneId, listZones[Id].fanStatus, listZones[Id].zoneName, listZones[Id].currentTemperature, listZones[Id].forced);
+            } else if (op == 2) {
                 listZones[Id].fanStatus = FanOff;
+                listZones[Id].forced = true;
+                changed = true;
+                logEvent(listZones[Id].zoneId, listZones[Id].fanStatus, listZones[Id].zoneName, listZones[Id].currentTemperature, listZones[Id].forced);
+            } else if (op == 3) {
+                listZones[Id].forced = false;
                 changed = true;
             }
 
             if (changed)
             {
                 printf("\nGuardando Cambios ...\n");
+                zoneSaveAll(listZones, nZones);
                 sleepSec(2);
             }else
             {
@@ -202,6 +207,8 @@ void tempManualControl()
             }
         }
     }while (Id == -1);
+
+    zoneFree(listZones);
     clearConsole();
 }
 

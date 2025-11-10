@@ -11,12 +11,15 @@ typedef struct {
     float defaultTemperatureThreshold;
     float currentTemperature;
     float internalHeat;
+    bool forced;
     FanStatus fanStatus;
     FanType fanType;
     int fanNum;
 } Zone;
 
 extern bool zonesLoaded;
+
+extern int nZones;
 
 static int zoneModValidation(char* string, bool isAdding);
 
@@ -42,13 +45,15 @@ int zoneModification();
 
 int zoneThresholdModification();
 
-int zoneDefaultThreshold();
+int zoneDefault();
 
 void zonePrint();
 
 void zoneTempCheck();
 
 void zoneFree(Zone* zones);
+
+void zoneLog();
 
 void zoneSaveAll(Zone* listZones, int numZones);
 

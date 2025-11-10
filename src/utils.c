@@ -15,7 +15,7 @@ bool isInRange(int x, int a, int b) {
     return x >= a && x <= b;
 }
 
-void logEvent(unsigned int id, int status, int mode)
+void logEvent(unsigned int id, int status, char*name, float temperature, int mode)
 {
     FILE *arch = fopen("historial.log", "a");
 
@@ -28,17 +28,16 @@ void logEvent(unsigned int id, int status, int mode)
         time_t t = time(NULL);
         struct tm *tm = localtime(&t);
 
-        fprintf(arch, "[%04d-%02d-%02d %02d:%02d:%02d] Zona %d: %s %s\n",
+        fprintf(arch, "[%04d-%02d-%02d %02d:%02d:%02d] Zona %d \"%s\": %s %s. Temperatura registrada: %f C\n",
         tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
         tm->tm_hour, tm->tm_min, tm->tm_sec,
-        id,
+        id, name,
         (status == 0) ? "APAGADO" : "ENCENDIDO",
-        (mode == 0) ? "MANUAL" : "AUTOMATICO");
+        (mode == 0) ? "AUTOMATICO" : "MANUAL", temperature);
     }
     fclose(arch);
 }
-//status 0:OFF     1:ON
-//mode 0:manual    1:automatico
+
 
 void clearBuffer() {
     int __bfc__var;

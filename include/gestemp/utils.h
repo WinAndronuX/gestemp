@@ -21,7 +21,7 @@
 
 void fileValidation (FILE **pf);
 
-void logEvent(unsigned int id, int status, int mode);
+void logEvent(unsigned int id, int status, char*name, float temperature, int mode);
 bool isInRange(int x, int a, int b);
 void clearBuffer();
 
