@@ -118,7 +118,6 @@ void exportToCSV() {
 
     printf("Completado %d líneas a %s\n", linesExported, outputFilename);
 
-    //Abrir
     printf("|| Abriendo archivo ||\n");
     char command[100];
 
