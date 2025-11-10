@@ -4,15 +4,15 @@
 ![Estado del Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
 ![Lenguaje](https://img.shields.io/badge/language-C11-blue.svg)
 
-Un sistema de simulación de control de temperatura basado en consola, escrito en C modular. Permite gestionar zonas, simular cambios de temperatura en tiempo real y registrar un historial de eventos, multiplataforma funcionando en 'Linux' y  'Windows'. 
+Un sistema de simulación de control de temperatura basado en consola, escrito en C modular. Permite gestionar zonas, simular cambios de temperatura en tiempo real y registrar un historial de eventos, multiplataforma funcionando en Linux y Windows. 
 
 ##  Características
 
 - ### Zonas
 
-**Ver Zonas:** Permite visualizar todas las zonas registradas y sus datos clave (ID, Nombre, Temp. Actual, Estado del Ventilador).
+**Ver Zonas:** Permite visualizar todas las zonas registradas y sus datos.
 
-**Agregar zonas**: El usuario puede registrar nuevas zonas ('zoneRegistration'), especificando sus propiedades físicas.
+**Agregar zonas**: El usuario puede registrar nuevas zonas.
 
 **Modificar zona**: Con esta función podemos modificar los datos de las zonas.
 
@@ -20,9 +20,9 @@ Un sistema de simulación de control de temperatura basado en consola, escrito e
 
 - ### Control De Temperatura
 
- **Simulación en Tiempo Real:** Un hilo separado ('executeEverySecond') actualiza el estado de la temperatura cada segundo.
+ **Simulación en Tiempo Real:** Un hilo separado actualiza el estado de la temperatura cada segundo.
  
- **Control Manual y Automático:** Los ventiladores se activan automáticamente por el hilo de simulación ('zoneTempCheck') o manualmente por el usuario ('tempctrlManualFanControl').
+ **Control Manual y Automático:** Los ventiladores se activan automáticamente por el hilo de simulación o manualmente por el usuario.
  
  **Monitor en Tiempo Real:** Una pantalla que se refresca cada segundo para mostrar el estado actual de todas las zonas.
  
@@ -32,29 +32,28 @@ Un sistema de simulación de control de temperatura basado en consola, escrito e
 
 - ### Consultas
 
-**Buscar eventos por rango de temperatura o fecha**: El usuario puede filtrar los eventos por fecha (ej. "2025-11-06") antes de exportar.
+**Buscar eventos por rango de temperatura o fecha**: El usuario puede filtrar los eventos por fecha o temperatura para visualizar el historial.
 
-**Exportación a CSV:** Permite filtrar el historial por fecha o tipo y exportarlo a un archivo '.csv'
+**Exportación a CSV:** Permite exportar a un archivo '.csv'
 
-**Función Estadistica:** 
+**Función Estadistica:** Ayuda a poder analizar los datos de manera concisa, utilizando análisis estadístico de las zonas.
 
 
 - ### Usuarios
 
 **Ver Usuarios:** Permite mostrar una lista de todos los usuarios registrados
 
-**Agregar Usuario**: Un administrador puede agregar nuevos usuarios al sistema, definiendo su nombre, contraseña y rol (Admin, Operador, Visitante) , utilizando 'usersAdd'.
+**Agregar Usuario**: Un administrador puede agregar nuevos usuarios al sistema, definiendo su nombre, contraseña y rol.
 
-**Borrar Usuario:** Un administrador puede eliminar un usuario existente del archivo 'users.dat' 'usersRemove'.
+**Borrar Usuario:** Un administrador puede eliminar un usuario existente.
 
-**Cambiar contraseña**: Un administrador puede cambiar la contraseña de un usuario existente 'usersChangePasswd'.
+**Cambiar contraseña**: Un administrador puede cambiar la contraseña de un usuario existente.
 
 - ### Configuración
 
-**Configurar umbral de temperatura por zona:** Nos sirve para la configuración de 
-el lumbrar de laguna zona especifica, 'temperatureThreshold''. 
+**Configurar umbral de temperatura por zona:** Nos sirve para la configuración de el umbral de alguna zona especifica. 
 
-**Restaurar configuración por defecto por zona:** Regresa los cambios hechos a una zona a su 'temperatureThreshold' a un valor predeterminado.
+**Restaurar configuración por defecto por zona:** Regresa los cambios hechos a una zona a un valor por defecto y elimina el historial asociado.
 
 ---
 ##  Cómo Empezar
@@ -70,43 +69,43 @@ Pasos para compilar y ejecutar el proyecto.
 ### Pasos para Compilar
 
 1.  **Clona (descarga) el repositorio:**
-    '''bash
+    ```bash
     git clone [https://github.com/WinAndronuX/gestemp.git](https://github.com/WinAndronuX/gestemp.git)
     cd gestemp
-    '''
+    ```
 
 2.  **Inicializa la librería 'listview' (Submódulo):**
-    '''bash
+    ```bash
     git submodule update --init --recursive
-    '''
+    ```
 
 3.  **Crea la carpeta de compilación:**
-    '''bash
+    ```bash
     mkdir build
     cd build
-    '''
+    ```
 
 4.  **Prepara la compilación con CMake:**
-    '''bash
+    ```bash
     cmake ..
-    '''
+    ```
 
 5.  **Compila el proyecto:**
-    '''bash
+    ```bash
     cmake --build .
-    '''
+    ```
 
 ### Ejecutar el Programa
 
 El ejecutable ('gestemp.exe' o 'gestemp') estará dentro de la carpeta 'build/'.
 
-'''bash
+```bash
 # En Windows (a veces está en 'build/Debug/')
 ./gestemp.exe
 
 # En Linux o Mac
 ./gestemp
-''''
+```
 
 ---
 
@@ -142,23 +141,21 @@ El proyecto está organizado de forma modular para separar responsabilidades.
 
 ### Descripción de Módulos Clave ('src/')
 
-- **'main.c'**: **(Principal)**. Inicia el programa, maneja el menú principal ('goto') y lanza el hilo de simulación.
+- **'main.c'**: Inicia el programa, maneja el menú principal y lanza el hilo de simulación.
 
-- **'zone.c'**: **(Datos)**. Se encarga de guardar, cargar y simular las zonas en el archivo 'zones.bin'.
+- **'zone.c'**: Se encarga de guardar, cargar y simular las zonas.
 
-- **'users.c'**: **(Datos)**. Maneja el login y el archivo de usuarios 'users.dat'.
+- **'users.c'**: Maneja el login y el archivo de usuarios.
 
-- **'tempctrl.c'**: **(Interfaz de Usuario)**. Contiene toda la lógica de pantalla para el menú "Control de Temperaturas" (mostrar datos, monitor en tiempo real y control manual).
+- **'tempctrl.c'**: Contiene toda la lógica de pantalla para el menú "Control de Temperaturas".
 
-- **'queries.c'**: **(Lógica/UI)**. Se encarga de leer 'historial.log' y exportar a CSV.
+- **'queries.c'**: Se encarga de leer el historial y exportar a CSV.
 
-- **'logger.c'**: **(Servicio)**. Provee la función 'logEvent()' para escribir en el historial.
+- **'tempsensor.c'**: Provee la fórmula matemática para calcular la nueva temperatura.
 
-- **'tempsensor.c'**: **(Lógica Pura)**. Provee la fórmula matemática ('tempsensorRead') para calcular la nueva temperatura.
+- **'utils.c'**: Funciones de ayuda (limpiar pantalla, esperar) que funcionan en Windows y Linux.
 
-- **'utils.c'**: **(Servicio)**. Funciones de ayuda (limpiar pantalla, esperar) que funcionan en Windows y Linux.
-
-- **'menu.c'**: **(UI)**. Almacena el texto de los menús y la función de entrada ('menuInputOpt').
+- **'menu.c'**: Almacena el texto de los menús y la función de entrada.
 
 
 ---
