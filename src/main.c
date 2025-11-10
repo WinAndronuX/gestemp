@@ -132,7 +132,7 @@ CONSULT:
             searchEventByRange();
             break;
         case 2:
-
+            queriesGenReport();
             break;
         case 3:
             exportToCSV();

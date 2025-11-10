@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gestemp/queries.h>
+#include <listview/listview.h>
 
 #define MAX_LINE_LENGTH 256
 
@@ -276,4 +277,108 @@ void searchEventByRange() {
         printf("No se encontraron eventos con esos criterios.\n");
     }
 
+}
+
+static int findReportElementByName(ReportElement* list, int n, char* name) {
+
+    int i;
+    for(i = 0; i < n; i++)
+        if (strcmp(list[0].name, name) == 0) return i;
+
+    return -1;
+}
+
+void queriesGenReport() {
+    FILE* history = fopen("historial.log", "r");
+    if (history == NULL) {
+        printf("Error. No se pudo abrir el archivo de historial\n\n");
+        return;
+    }
+
+    char zoneName[100];
+    double zoneTemp;
+
+    ReportElement* list = (ReportElement*) malloc(sizeof(ReportElement));
+    int numZ = 0;
+
+    while (1) {
+        int x = fscanf(history, "%*[^\"]\"%99[^\"]\"%*[^-]-> Temperatura registrada: %lf C", zoneName, &zoneTemp);
+
+        if (x != 2) {
+            if (x == EOF) {
+                break;
+            }
+            fscanf(history, "%*[^\n]\n");
+            continue;
+        }
+
+        int id = findReportElementByName(list, numZ, zoneName);
+        if (id == -1) {
+            list = (ReportElement*) realloc(list, sizeof(ReportElement) * (numZ + 1));
+
+            strcpy(list[0].name, zoneName);
+            list[numZ].maxTemp = zoneTemp;
+            list[numZ].minTemp = zoneTemp;
+            list[numZ].avg = zoneTemp;
+            list[numZ].num = 1;
+
+            numZ++;
+        } else {
+            
+            if (zoneTemp > list[id].maxTemp)
+                list[id].maxTemp = zoneTemp;
+            else if (zoneTemp < list[id].minTemp)
+                list[id].minTemp = zoneTemp;
+            
+            list[id].avg += zoneTemp;
+            list[id].num += 1;
+        }
+    }
+
+    ListView* lv = listviewCreate("Reporte de Zonas", 4);
+
+    listviewHeadAdd(lv, "Nombre", 15);
+    listviewHeadAddAuto(lv, "Temp. Min.");
+    listviewHeadAddAuto(lv, "Temp. Max.");
+    listviewHeadAddAuto(lv, "Temp. Prom.");
+
+    float totalAvg = 0, totalMin, totalMax;
+
+    if (numZ > 0) {
+        totalMin = list[0].minTemp;
+        totalMax = list[0].maxTemp;
+    }
+
+    int i;
+    for(i = 0; i < numZ; i++) {
+
+        listviewAdd(lv, list[i].name);
+
+        if (list[i].minTemp < totalMin) totalMin = list[i].maxTemp;
+
+        char min[8];
+        sprintf(min, "%.2f C", list[i].minTemp);
+        listviewAdd(lv, min);
+
+        if (list[i].maxTemp > totalMax) totalMax = list[i].maxTemp;
+
+        char max[8];
+        sprintf(max, "%.2f C", list[i].maxTemp);
+        listviewAdd(lv, max);
+
+        float avg = list[i].avg / (float) list[i].num;
+        totalAvg += avg;
+
+        char avgS[8];
+        sprintf(avgS, "%.2f C", avg);
+        listviewAdd(lv, avgS);
+    }
+    
+    listviewFootPrint(lv);
+
+    printf("\nTemp. Minima General: %.2f C\n", totalMin);
+    printf("Temp. Maxima General: %.2f C\n", totalMin);
+    printf("Temp. Promedio General: %.2f C\n", totalAvg / (float) numZ);
+
+    fclose(history);
 }
