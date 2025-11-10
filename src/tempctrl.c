@@ -1,4 +1,3 @@
-//Librerias Estandar
 #include <stdio.h>
 
 #include <gestemp/tempctrl.h>
@@ -8,7 +7,7 @@
 #include <gestemp/menu.h>
 
 #include <string.h>
-#include <listview/listview.h> //Libreria
+#include <listview/listview.h>
 
 #define MAX_LOG_LINES 10
 #define MAX_LINE_LENGTH 256
@@ -124,7 +123,7 @@ void tempShowHistory() {
 
 
                 int linesToSkip = totalLines - 10;
-                if (linesToSkip < 0) { // Por si hay menos de 10 líneas
+                if (linesToSkip < 0) { 
                     linesToSkip = 0;
                 }
 
@@ -140,12 +139,12 @@ void tempShowHistory() {
             }
         }
 
-        fclose(file); // Cierra el archivo
+        fclose(file);
     }
 
     printf("\n--- Fin del Historial ---\n");
     printf("Presione Enter para continuar...");
-    clearBuffer(); //
+    clearBuffer(); 
     getchar();
     clearConsole();
 }
