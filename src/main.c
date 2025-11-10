@@ -31,7 +31,9 @@ void *executeEvery5Minutes() {
 
     while (!programFinished) {
 
-        // Aqui va la llamada al log de eventos
+        zoneLog();
+
+        writeZones();
 
         sleepSec(120);
     }
@@ -190,7 +192,7 @@ CONFIG:
             zoneThresholdModification();
             break;
         case 2:
-            zoneDefaultThreshold();
+            zoneDefault();
             break;
         }
     }

@@ -7,6 +7,8 @@
 #include "gestemp/users.h"
 #include <listview/listview.h>
 
+#include "gestemp/menu.h"
+
 bool zonesLoaded = false;
 
 static float tempMax = 50, tempMin = -10;
@@ -14,7 +16,7 @@ static const char* ZONE_FILE = "zones.dat";
 
 Zone* listZones = NULL;
 
-int numZones = 0;
+int nZones = 0;
 
 static int zoneModValidation(char* string, bool isAdding) {
     if (actualUser.role != UserRoleOperator && actualUser.role != UserRoleAdmin) {
@@ -26,7 +28,7 @@ static int zoneModValidation(char* string, bool isAdding) {
 
     loadZones();
 
-    if (numZones <= 0) {
+    if (nZones <= 0) {
         printf("Error. No hay zonas por %s\n", string);
         return false;
     }
@@ -36,7 +38,7 @@ static int zoneModValidation(char* string, bool isAdding) {
 
 int zoneSearchName(char* name) {
 
-    for (int i = 0; i < numZones; i++) {
+    for (int i = 0; i < nZones; i++) {
         if (strcmp(listZones[i].zoneName, name) == 0) {
             return i;
         }
@@ -58,19 +60,19 @@ int loadZones() {
     }
 
     listZones = NULL;
-    numZones = 0;
+    nZones = 0;
     Zone tempZone;
 
     while (fread(&tempZone, sizeof(Zone), 1, file)) {
 
-        Zone* temp = (Zone*) realloc(listZones, (numZones + 1) * sizeof(Zone));
+        Zone* temp = (Zone*) realloc(listZones, (nZones + 1) * sizeof(Zone));
         if (temp == NULL) {
             fclose(file);
             return false;
         }
         listZones = temp;
-        listZones[numZones] = tempZone;
-        numZones++;
+        listZones[nZones] = tempZone;
+        nZones++;
     }
 
     fclose(file);
@@ -78,23 +80,23 @@ int loadZones() {
 }
 
 static unsigned int getZoneId() {
-    bool inIn[numZones + 1];
+    bool inIn[nZones + 1];
     int i;
-    for (i = 0; i < numZones + 1; i++) {
+    for (i = 0; i < nZones + 1; i++) {
         inIn[i] = false;
     }
-    for (i = 0; i < numZones; i++) {
+    for (i = 0; i < nZones; i++) {
         int id = listZones[i].zoneId;
-        if (id > 0 && id <= numZones) {
+        if (id > 0 && id <= nZones) {
             inIn[id] = true;
         }
     }
-    for (i = 1; i <= numZones; i++) {
+    for (i = 1; i <= nZones; i++) {
         if (inIn[i] == false) {
             return i;
         }
     }
-    return numZones + 1;
+    return nZones + 1;
 }
 
 static unsigned int zoneNameVal(char zoneName[16]) {
@@ -103,15 +105,11 @@ static unsigned int zoneNameVal(char zoneName[16]) {
         printf("Error. Nombre de zona muy largo.\n");
         return true;
     }
-    for (i = 0; i < numZones; i++) {
+    for (i = 0; i < nZones; i++) {
         if (strcmp(listZones[i].zoneName, zoneName) == 0) {
             printf("Error. Nombre ya utilizado.\n");
             return true;
         }
-    }
-    if (strcmp(zoneName, "exit") == 0) {
-        printf("Error. La zona no puede llamarse la palabra reservada 'exit'.\n");
-        return true;
     }
 
     if (strcmp(zoneName, "all") == 0) {
@@ -129,7 +127,7 @@ int writeZones() {
         return false;
     }
 
-    fwrite(listZones, sizeof(Zone), numZones, file);
+    fwrite(listZones, sizeof(Zone), nZones, file);
 
     fclose(file);
 
@@ -218,6 +216,8 @@ Zone *zoneRegistration() {
         }
     }while(fanType != 0 && fanType != 1 && fanType != 2);
 
+    registeredZone->forced = false;;
+
     int nPeople, nCellphones, nComputers;
 
     do {
@@ -240,22 +240,23 @@ void zoneAdd() {
     if (!zoneModValidation("", true)) return;
 
     Zone *registeredZone = zoneRegistration();
-    Zone* temp = (Zone*) realloc(listZones, (numZones + 1) *sizeof(Zone));
+    Zone* temp = (Zone*) realloc(listZones, (nZones + 1) *sizeof(Zone));
 
-    temp[numZones].zoneId = registeredZone->zoneId;
-    strcpy(temp[numZones].zoneName, registeredZone->zoneName);
-    temp[numZones].zoneVolume = registeredZone->zoneVolume;
-    temp[numZones].temperatureThreshold = registeredZone->temperatureThreshold;
-    temp[numZones].defaultTemperatureThreshold = registeredZone->defaultTemperatureThreshold;
-    temp[numZones].currentTemperature = registeredZone->currentTemperature;
-    temp[numZones].internalHeat = registeredZone->internalHeat;
-    temp[numZones].fanStatus = registeredZone->fanStatus;
-    temp[numZones].fanType = registeredZone->fanType;
-    temp[numZones].fanNum = registeredZone->fanNum;
+    temp[nZones].zoneId = registeredZone->zoneId;
+    strcpy(temp[nZones].zoneName, registeredZone->zoneName);
+    temp[nZones].zoneVolume = registeredZone->zoneVolume;
+    temp[nZones].temperatureThreshold = registeredZone->temperatureThreshold;
+    temp[nZones].defaultTemperatureThreshold = registeredZone->defaultTemperatureThreshold;
+    temp[nZones].currentTemperature = registeredZone->currentTemperature;
+    temp[nZones].internalHeat = registeredZone->internalHeat;
+    temp[nZones].fanStatus = registeredZone->fanStatus;
+    temp[nZones].fanType = registeredZone->fanType;
+    temp[nZones].forced = registeredZone->forced;
+    temp[nZones].fanNum = registeredZone->fanNum;
 
     listZones = temp;
 
-    numZones++;
+    nZones++;
 
     writeZones();
 }
@@ -266,7 +267,7 @@ int zoneRemove() {
 
     loadZones();
 
-    if (numZones <= 0) {
+    if (nZones <= 0) {
         printf("Error. No hay zonas por borrar\n");
         return false;
     }
@@ -283,13 +284,13 @@ int zoneRemove() {
         return false;
     }
 
-    for (int i = indexToRemove; i < numZones - 1; i++) {
+    for (int i = indexToRemove; i < nZones - 1; i++) {
         listZones[i] = listZones[i + 1];
     }
 
-    numZones--;
+    nZones--;
 
-    listZones = (Zone*) realloc(listZones, numZones * sizeof(Zone));
+    listZones = (Zone*) realloc(listZones, nZones * sizeof(Zone));
 
     writeZones();
 
@@ -356,14 +357,12 @@ int zoneThresholdModification() {
         printf("Error. Umbral fuera de rango.\n");
     }while (true);
 
-
-
     writeZones();
 
     return true;
 }
 
-int zoneDefaultThreshold() {
+int zoneDefault() {
     if (!zoneModValidation("modificar", false)) return false;
 
     loadZones();
@@ -380,10 +379,55 @@ int zoneDefaultThreshold() {
         return false;
     }
 
-    printf("\nCoincidencia encontrada:\n\tZona: %s\n\tId: %i\n\tUmbral actual: %f\n\nCambiando al umbral por defecto: %f\n",
+    printf("\nCoincidencia encontrada:\n\tZona: %s\n\tId: %i\n\tUmbral actual: %f\nUmbral por defecto: %f\n\n",
         listZones[indexToMod].zoneName, listZones[indexToMod].zoneId, listZones[indexToMod].temperatureThreshold, listZones[indexToMod].defaultTemperatureThreshold);
 
-    listZones[indexToMod].temperatureThreshold = listZones[indexToMod].defaultTemperatureThreshold;
+    printf("Desea regresar a las configuraciones por defecto? Esto borrara el historial asociado\n1) Continuar\n2) Salir\n");
+    int op = menuInputOpt(1, 2);
+
+    if (op == 1) {
+        listZones[indexToMod].temperatureThreshold = listZones[indexToMod].defaultTemperatureThreshold;
+        listZones[indexToMod].forced = false;
+
+        FILE *ogFile, *tempFile;
+        char line[256];
+
+        ogFile = fopen("historial.log", "r");
+        if (ogFile == NULL) {
+            printf("Error. No se pudo abrir el archivo.\n");
+            return false;
+        }
+    
+        tempFile = fopen("temp.log", "w");
+        if (tempFile == NULL) {
+            printf("Error. No se pudo crear el archivo temporal.\n");
+            fclose(ogFile);
+            return false;
+        }
+    
+        while (fgets(line, sizeof(line), ogFile) != NULL) {
+            if ((strstr(line, zoneName) == NULL)) {
+                fputs(line, tempFile);
+            }
+        }
+    
+        fclose(ogFile);
+        fclose(tempFile);
+    
+        if (remove("historial.log") != 0) {
+            printf("Error. No se pudo eliminar el archivo original.\n");
+            remove("temp.log");
+            return false;
+        }
+    
+        if (rename("temp.log", "historial.log") != 0) {
+            printf("Error. No se pudo renombrar el archivo temporal.\n");
+            return false;
+        }
+
+    }else {
+        printf("Continuando sin cambios\n");
+    }
 
     writeZones();
 
@@ -405,7 +449,7 @@ void zonePrint() {
     listviewHeadAdd(lv, "Cantidad", 10);
 
     int i;
-    for (i = 0; i < numZones; i++) {
+    for (i = 0; i < nZones; i++) {
         char sD[5];
         sprintf(sD, "%d", listZones[i].zoneId);
 
@@ -457,18 +501,20 @@ void zonePrint() {
 void zoneTempCheck() {
     loadZones();
     int i;
-    for (i = 0; i < numZones; i++) {
+    for (i = 0; i < nZones; i++) {
         FanStatus previousStatus = listZones[i].fanStatus;
         listZones[i].currentTemperature = tempsensorRead(&listZones[i]);
 
         if (listZones[i].currentTemperature > listZones[i].temperatureThreshold) {
+            if (listZones[i].forced) continue;
             listZones[i].fanStatus = FanOn;
         } else {
+            if (listZones[i].forced) continue;
             listZones[i].fanStatus = FanOff;
         }
 
         if (previousStatus != listZones[i].fanStatus) {
-            logEvent(listZones[i].zoneId, listZones[i].fanStatus, 1);
+            logEvent(listZones[i].zoneId, listZones[i].fanStatus, listZones[i].zoneName, listZones[i].currentTemperature, listZones[i].forced);
         }
     }
 }
@@ -481,9 +527,10 @@ void zoneSaveAll(Zone* allZones, int numZones)
         return;
     }
 
+    listZones = allZones;
+
     if (numZones > 0 && allZones != NULL)
     {
-
         fwrite(allZones, sizeof(Zone), numZones, file);
     }
 
@@ -493,6 +540,13 @@ void zoneSaveAll(Zone* allZones, int numZones)
 void zoneFree(Zone* zones) {
     if (zones != NULL) {
         free(zones);
+    }
+}
+
+void zoneLog() {
+    int i;
+    for (i = 0; i < nZones; i++) {
+        logEvent(listZones[i].zoneId, listZones[i].fanStatus, listZones[i].zoneName, listZones[i].currentTemperature, listZones[i].forced);
     }
 }
 
