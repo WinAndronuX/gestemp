@@ -23,6 +23,7 @@ add_executable(gestemp
     src/users.c
     src/menu.c
     src/tempctrl.c
+    src/theme.c
         src/queries.c
         include/gestemp/queries.h
 )

@@ -7,6 +7,7 @@
 #include <gestemp/menu.h>
 #include <gestemp/tempctrl.h>
 #include <gestemp/queries.h>
+#include <gestemp/theme.h>
 
 bool programFinished = false, tempMonitor = false;
 
@@ -173,7 +174,7 @@ CONFIG:
 
     while (1) {
         menuPrint(menuConfig);
-        opc = menuInputOpt(0, 2);
+        opc = menuInputOpt(0, 3);
 
         switch (opc) {
         case 0:
@@ -185,12 +186,16 @@ CONFIG:
         case 2:
             zoneDefault();
             break;
+        case 3:
+            themeChange();
+            break;
         }
     }
 }
 
 int main() {
 
+    themeInit();
     tempsensorInit();
     usersInit();
     zoneInit();
@@ -214,6 +219,8 @@ int main() {
     menu();
 
     pthread_join(thread, NULL);
+
+    themeRestoreCLI();
 
     return 0;
 }

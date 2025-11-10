@@ -116,6 +116,7 @@ const char* menuHeadConfig = {
 const char* menuConfig[] = {
     "1 ) Configurar umbral de temperatura por zona",
     "2 ) Restaurar configuracion por defecto por zona",
+    "3 ) Cambiar tema de la aplicacion",
     "",
     "0 ) Regresar",
     NULL
