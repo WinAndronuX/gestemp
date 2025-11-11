@@ -122,7 +122,7 @@ void exportToCSV() {
     fclose(logFile);
     fclose(csvFile);
 
-    printf("Completado %d líneas a %s\n", linesExported, outputFilename);
+    printf("Completado %d lineas a %s\n", linesExported, outputFilename);
 
     printf("|| Abriendo archivo ||\n");
     char command[100];
@@ -200,6 +200,8 @@ void searchEventByRange() {
         fclose(file);
         return;
     }
+
+    searchId = listZones[searchId].zoneId;
 
     printf("\nSeleccione el tipo de filtro:\n");
     printf("\t1) Rango de fechas\n");
@@ -283,7 +285,6 @@ void searchEventByRange() {
         struct tm tmDate;
         time_t ttDate;
         int zoneId; float zoneTemp;
-        char zoneNameSearch[16], statusStr[10], modeStr[11];
 
         int parsed = sscanf(line,
             "[%d-%d-%d %d:%d:%d] Zona %d \"%*[^\"]\": %*s %*[^-]-> Temperatura registrada: %f C",
@@ -303,7 +304,7 @@ void searchEventByRange() {
         }else if (filterType == 2) {
             tempMatch = (zoneTemp >= minTemp && zoneTemp <= maxTemp);
         }else if (filterType == 3) {
-            dateMatch = true; zoneMatch = true;
+            dateMatch = true; tempMatch = true;
         }
 
         if (zoneMatch && dateMatch || zoneMatch && tempMatch) {
@@ -325,7 +326,7 @@ static int findReportElementByName(ReportElement* list, int n, char* name) {
 
     int i;
     for(i = 0; i < n; i++)
-        if (strcmp(list[0].name, name) == 0) return i;
+        if (strcmp(list[i].name, name) == 0) return i;
 
     return -1;
 }
@@ -358,7 +359,7 @@ void queriesGenReport() {
         if (id == -1) {
             list = (ReportElement*) realloc(list, sizeof(ReportElement) * (numZ + 1));
 
-            strcpy(list[0].name, zoneName);
+            strcpy(list[numZ].name, zoneName);
             list[numZ].maxTemp = zoneTemp;
             list[numZ].minTemp = zoneTemp;
             list[numZ].avg = zoneTemp;
@@ -366,7 +367,7 @@ void queriesGenReport() {
 
             numZ++;
         } else {
-            
+
             if (zoneTemp > list[id].maxTemp)
                 list[id].maxTemp = zoneTemp;
             else if (zoneTemp < list[id].minTemp)

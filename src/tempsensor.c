@@ -12,8 +12,8 @@
 static float rho = 1.2;
 static float cp = 1005;
 static float tOut = 27;
-static float tempMax = 38;
-static float tempMin = 20;
+static float tempMax = 50;
+static float tempMin = -10;
 
 static void loadConfig() {
 
@@ -76,10 +76,16 @@ float tempsensorRead(Zone *z) {
         newT = z->currentTemperature + 1 * (qInt / (rho * cp * z->zoneVolume));
     }
 
-    if (newT > tempMax)
-        newT = tempMax;
-    if (newT < tempMin)
-        newT = tempMin;
+     if (newT > tempMax) {
+         newT = tempMax;
+         z->forced = false;
+         logEvent(z->zoneId, z->fanStatus, z->zoneName, z->currentTemperature, z->forced);
+     }
+     if (newT < tempMin) {
+         newT = tempMin;
+         z->forced = false;
+         logEvent(z->zoneId, z->fanStatus, z->zoneName, z->currentTemperature, z->forced);
+     }
 
     return newT;
 }

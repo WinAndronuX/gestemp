@@ -31,6 +31,8 @@ static unsigned int getZoneId();
 
 static unsigned int zoneNameVal(char zoneName[16]);
 
+static int logDelete(char* zoneName);
+
 int writeZones();
 
 void zoneInit();

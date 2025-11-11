@@ -21,7 +21,6 @@ void *executeEverySecond() {
     for (i = 0; !programFinished; i++) {
 
         zoneTempCheck();
-        writeZones();
         if (tempMonitor) tempRealtimeMonitor();
 
         if (i == 23) {

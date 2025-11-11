@@ -97,7 +97,7 @@ const char* menuUsers[] = {
     "1 ) Ver usuarios",
     "2 ) Agregar usuario",
     "3 ) Borrar usuario",
-    "4 ) Cambiar contraseña",
+    "4 ) Cambiar contrasena",
     "",
     "0 ) Regresar",
     NULL

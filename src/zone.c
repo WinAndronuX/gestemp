@@ -119,6 +119,46 @@ static unsigned int zoneNameVal(char zoneName[16]) {
     return false;
 }
 
+static int logDelete(char* zoneName) {
+    FILE *ogFile, *tempFile;
+    char line[256];
+
+    ogFile = fopen("historial.log", "r");
+    if (ogFile == NULL) {
+        printf("Error. No se pudo abrir el archivo.\n");
+        return false;
+    }
+
+    tempFile = fopen("temp.log", "w");
+    if (tempFile == NULL) {
+        printf("Error. No se pudo crear el archivo temporal.\n");
+        fclose(ogFile);
+        return false;
+    }
+
+    while (fgets(line, sizeof(line), ogFile) != NULL) {
+        if ((strstr(line, zoneName) == NULL)) {
+            fputs(line, tempFile);
+        }
+    }
+
+    fclose(ogFile);
+    fclose(tempFile);
+
+    if (remove("historial.log") != 0) {
+        printf("Error. No se pudo eliminar el archivo original.\n");
+        remove("temp.log");
+        return false;
+    }
+
+    if (rename("temp.log", "historial.log") != 0) {
+        printf("Error. No se pudo renombrar el archivo temporal.\n");
+        return false;
+    }
+
+    return true;
+}
+
 int writeZones() {
 
     FILE* file = fopen("zones.dat","wb");
@@ -290,6 +330,8 @@ int zoneRemove() {
 
     nZones--;
 
+    if (!(logDelete(zoneName))) return false;
+
     listZones = (Zone*) realloc(listZones, nZones * sizeof(Zone));
 
     writeZones();
@@ -389,41 +431,7 @@ int zoneDefault() {
         listZones[indexToMod].temperatureThreshold = listZones[indexToMod].defaultTemperatureThreshold;
         listZones[indexToMod].forced = false;
 
-        FILE *ogFile, *tempFile;
-        char line[256];
-
-        ogFile = fopen("historial.log", "r");
-        if (ogFile == NULL) {
-            printf("Error. No se pudo abrir el archivo.\n");
-            return false;
-        }
-    
-        tempFile = fopen("temp.log", "w");
-        if (tempFile == NULL) {
-            printf("Error. No se pudo crear el archivo temporal.\n");
-            fclose(ogFile);
-            return false;
-        }
-    
-        while (fgets(line, sizeof(line), ogFile) != NULL) {
-            if ((strstr(line, zoneName) == NULL)) {
-                fputs(line, tempFile);
-            }
-        }
-    
-        fclose(ogFile);
-        fclose(tempFile);
-    
-        if (remove("historial.log") != 0) {
-            printf("Error. No se pudo eliminar el archivo original.\n");
-            remove("temp.log");
-            return false;
-        }
-    
-        if (rename("temp.log", "historial.log") != 0) {
-            printf("Error. No se pudo renombrar el archivo temporal.\n");
-            return false;
-        }
+        if (!(logDelete(zoneName))) return false;
 
     }else {
         printf("Continuando sin cambios\n");
@@ -517,6 +525,7 @@ void zoneTempCheck() {
             logEvent(listZones[i].zoneId, listZones[i].fanStatus, listZones[i].zoneName, listZones[i].currentTemperature, listZones[i].forced);
         }
     }
+    writeZones();
 }
 
 void zoneSaveAll(Zone* allZones, int numZones)
