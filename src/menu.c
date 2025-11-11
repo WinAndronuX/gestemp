@@ -136,7 +136,7 @@ int menuInputOpt(int a, int b) {
 
     while (1) {
 
-        fseek(stdin, 0, SEEK_END);
+        clearBuffer();
 
         printf("%c ", PROMPT);
         scanf("%d", &x);
