@@ -59,7 +59,7 @@ void listviewHeadAdd(ListView* lv, char* text, int size) {
     for (i = 0; i < lv->nCols; i++) {
 
         printSymbol("│", 179);
-        printf(" \e[1m%-*.*s\e[m ", lv->colsSizes[i], lv->colsSizes[i], lv->heads[i]);
+        printf(" \e[1m%-*.*s\e[22m ", lv->colsSizes[i], lv->colsSizes[i], lv->heads[i]);
 
         if (i == lv->nCols - 1) {
             printSymbol("│", 179);
